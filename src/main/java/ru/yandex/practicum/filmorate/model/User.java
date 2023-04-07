@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.interfaces.Resource;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
 @Data
-public class User {
+public class User implements Resource {
 
     private int id;
     @NotNull(message = EMAIL_NULL)
@@ -30,4 +31,8 @@ public class User {
         this.birthday = birthday;
     }
 
+    @Override
+    public String getResourceName() {
+        return "пользователь";
+    }
 }

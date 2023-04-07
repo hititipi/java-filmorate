@@ -45,7 +45,7 @@ public class ValidateFilmTest {
         Film film = new Film("film_name", "film_description", LocalDate.now(), Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class ValidateFilmTest {
         Film film = new Film(null, "film_description", LocalDate.now(), Duration.ofMinutes(100));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
-        assertTrue(messages.contains(FILM_NAME_NULL));
-        assertTrue(messages.contains(FILM_NAME_EMPTY));
+        assertTrue(messages.contains(FILM_NAME_NULL), "Неверное сообщение об ошибке");
+        assertTrue(messages.contains(FILM_NAME_EMPTY), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ValidateFilmTest {
         Film film = new Film("", "film_description", LocalDate.now(), Duration.ofMinutes(100));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        assertTrue(messages.contains(FILM_NAME_EMPTY));
+        assertTrue(messages.contains(FILM_NAME_EMPTY), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", description, LocalDate.now(), Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", description, LocalDate.now(), Duration.ofMinutes(100));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        assertTrue(messages.contains(FILM_DESCRIPTION_INVALID));
+        assertTrue(messages.contains(FILM_DESCRIPTION_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", releaseDate, Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -97,8 +97,8 @@ public class ValidateFilmTest {
         LocalDate invalidReleaseDate = LocalDate.of(1880, 12, 28);
         Film film = new Film("name", "description", invalidReleaseDate, Duration.ofMinutes(100));
         Exception exception = assertThrows(ValidationException.class,
-                () -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
-        assertEquals(exception.getMessage(), FILM_RELEASE_INVALID, "Неверно сообщение об ошибке");
+                () -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertEquals(exception.getMessage(), FILM_RELEASE_INVALID, "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -106,23 +106,23 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", null, Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
-    void createFilmWithhZeroDuration() {
+    void createFilmWithZeroDuration() {
         Film film = new Film("name", "description", LocalDate.now(), Duration.ofMinutes(0));
-        Exception exception = assertThrows(ValidationException.class,
-                () -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
-        assertEquals(exception.getMessage(), FILM_DURATION_INVALID, "Неверно сообщение об ошибке");
+        List<String> messages = getValidateErrorMsg(film);
+        assertEquals(messages.size(), 1, "Неверное количество сообщений");
+        assertTrue(messages.contains(FILM_DURATION_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
     void createFilmWithNegativeDuration() {
         Film film = new Film("name", "description", LocalDate.now(), Duration.ofMinutes(-10));
-        Exception exception = assertThrows(ValidationException.class,
-                () -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
-        assertEquals(exception.getMessage(), FILM_DURATION_INVALID, "Неверно сообщение об ошибке");
+        List<String> messages = getValidateErrorMsg(film);
+        assertEquals(messages.size(), 1, "Неверное количество сообщений");
+        assertTrue(messages.contains(FILM_DURATION_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", LocalDate.now(), null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateFilm(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
 }

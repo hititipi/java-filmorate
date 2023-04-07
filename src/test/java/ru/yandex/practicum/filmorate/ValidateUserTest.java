@@ -47,8 +47,8 @@ public class ValidateUserTest {
         User user = new User(null, "login", "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
-        assertTrue(messages.contains(EMAIL_NULL));
-        assertTrue(messages.contains(EMAIL_EMPTY));
+        assertTrue(messages.contains(EMAIL_NULL), "Неверное сообщение об ошибке");
+        assertTrue(messages.contains(EMAIL_EMPTY), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -56,8 +56,7 @@ public class ValidateUserTest {
         User user = new User("", "login", "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        System.out.println(messages);
-        assertTrue(messages.contains(EMAIL_EMPTY));
+        assertTrue(messages.contains(EMAIL_EMPTY), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -65,7 +64,7 @@ public class ValidateUserTest {
         User user = new User("mail.ru", "login", "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        assertTrue(messages.contains(EMAIL_INVALID));
+        assertTrue(messages.contains(EMAIL_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -73,10 +72,8 @@ public class ValidateUserTest {
         User user = new User("test@mail.ru", null, "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
-        System.out.println(messages);
-
-        assertTrue(messages.contains(LOGIN_NULL));
-        assertTrue(messages.contains(LOGIN_EMPTY));
+        assertTrue(messages.contains(LOGIN_NULL), "Неверное сообщение об ошибке");
+        assertTrue(messages.contains(LOGIN_EMPTY), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -84,8 +81,8 @@ public class ValidateUserTest {
         User user = new User("test@mail.ru", "", "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
-        assertTrue(messages.contains(LOGIN_EMPTY));
-        assertTrue(messages.contains(LOGIN_INVALID));
+        assertTrue(messages.contains(LOGIN_EMPTY), "Неверное сообщение об ошибке");
+        assertTrue(messages.contains(LOGIN_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -93,7 +90,7 @@ public class ValidateUserTest {
         User user = new User("test@mail.ru", "abc def", "name", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        assertTrue(messages.contains(LOGIN_INVALID));
+        assertTrue(messages.contains(LOGIN_INVALID), "Неверное сообщение об ошибке");
     }
 
     @Test
@@ -117,7 +114,7 @@ public class ValidateUserTest {
         User user = new User("test@mail.ru", "login", "name", LocalDate.now().plusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
-        assertTrue(messages.contains(BIRTHDAY_INVALID));
+        assertTrue(messages.contains(BIRTHDAY_INVALID), "Неверное сообщение об ошибке");
     }
 
 }
