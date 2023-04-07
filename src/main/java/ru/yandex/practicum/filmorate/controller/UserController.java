@@ -23,6 +23,7 @@ public class UserController extends AbstractController<User> {
     @Override
     @PostMapping
     public User createResource(@Valid @RequestBody User user) {
+        log.info(Messages.tryAddResource(user));
         return super.createResource(user);
     }
 
@@ -30,7 +31,13 @@ public class UserController extends AbstractController<User> {
     @Override
     @PutMapping
     public User updateResource(@Valid @RequestBody User user) {
+        log.info(Messages.tryUpdateResource(user));
         return super.updateResource(user);
+    }
+
+    @Override
+    void validateResource(User resource) {
+
     }
 
 }

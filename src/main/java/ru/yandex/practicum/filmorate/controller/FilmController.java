@@ -29,12 +29,14 @@ public class FilmController extends AbstractController<Film> {
     @Override
     @PostMapping
     public Film createResource(@Valid @RequestBody Film film) {
+        log.info(Messages.tryAddResource(film));
         return super.createResource(film);
     }
 
     @Override
     @PutMapping
     public Film updateResource(@Valid @RequestBody Film film) {
+        log.info(Messages.tryUpdateResource(film));
         return super.updateResource(film);
     }
 
