@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public class Messages {
 
-    public static String tryAddResource(Resource resource){
+    public static String tryAddResource(Resource resource) {
         return String.format("Запрос на создание ресурса: %s", resource.getResourceName());
     }
 
@@ -20,7 +20,7 @@ public class Messages {
                 resource.getResourceName(), resource.getId());
     }
 
-    public static String tryUpdateResource(Resource resource){
+    public static String tryUpdateResource(Resource resource) {
         return String.format("Запрос на обновление ресурса: %s, id =  %d",
                 resource.getResourceName(), resource.getId());
     }
