@@ -48,7 +48,7 @@ public class FilmService extends ResourceService<Film> {
             log.warn(Messages.filmNotFound(filmId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
-        if (!storage.contains(userId)) {
+        if (!userStorage.contains(userId)) {
             log.warn(Messages.userNotFound(userId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
@@ -65,7 +65,7 @@ public class FilmService extends ResourceService<Film> {
             log.warn(Messages.filmNotFound(filmId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
-        if (!storage.contains(userId)) {
+        if (!userStorage.contains(userId)) {
             log.warn(Messages.userNotFound(userId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
