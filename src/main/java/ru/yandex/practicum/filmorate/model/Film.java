@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.interfaces.Resource;
 import javax.validation.constraints.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
@@ -22,9 +24,22 @@ public class Film implements Resource {
     private final LocalDate releaseDate;
     @DurationMin(nanos = 1, message = FILM_DURATION_INVALID)
     private final Duration duration;
+    private Set<Integer> likes = new HashSet<>();
 
     @Override
     public String getResourceName() {
         return "фильм";
+    }
+
+    public void addLike(int userId) {
+        likes.add(userId);
+    }
+
+    public void deleteLike(int userId) {
+        likes.remove(userId);
+    }
+
+    public boolean containsLike(int userId) {
+        return likes.contains(userId);
     }
 }
