@@ -11,16 +11,18 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.utils.Messages;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.exception.ValidationErrors.FILM_RELEASE_INVALID;
-import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
+import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
 @Slf4j
 @Service
-public class FilmService extends ResourceService<Film> {
+public class FilmService extends ResourceService<Film, FilmStorage> {
 
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static final Comparator<Film> likeNumberComparator = Comparator.comparing(film -> -film.getLikes().size());
 
     private final UserStorage userStorage;
 
@@ -29,7 +31,6 @@ public class FilmService extends ResourceService<Film> {
         this.storage = storage;
         this.userStorage = userStorage;
     }
-
 
     private void validateReleaseDate(LocalDate releaseDate) {
         if (releaseDate != null && MIN_RELEASE_DATE.isAfter(releaseDate)) {
@@ -43,41 +44,46 @@ public class FilmService extends ResourceService<Film> {
         validateReleaseDate(film.getReleaseDate());
     }
 
-    public void addLike(int filmId, int userId) {
+    private void checkContainsFilm(int filmId) {
         if (!storage.contains(filmId)) {
             log.warn(Messages.filmNotFound(filmId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
+    }
+
+    private void checkContainsUser(int userId) {
         if (!userStorage.contains(userId)) {
             log.warn(Messages.userNotFound(userId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
+    }
+
+    public void addLike(int filmId, int userId) {
+        checkContainsFilm(filmId);
+        checkContainsUser(userId);
         Film film = storage.get(filmId);
         if (film.containsLike(userId)) {
             log.warn(Messages.likeAlreadySet(filmId, userId));
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "Лайк уже поставлен");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, LIKE_ALREADY_SET);
         }
         film.addLike(userId);
     }
 
     public void deleteLike(int filmId, int userId) {
-        if (!storage.contains(filmId)) {
-            log.warn(Messages.filmNotFound(filmId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        if (!userStorage.contains(userId)) {
-            log.warn(Messages.userNotFound(userId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
+        checkContainsFilm(filmId);
+        checkContainsUser(userId);
         Film film = storage.get(filmId);
         if (!film.containsLike(userId)) {
             log.warn(Messages.likeNotSet(filmId, userId));
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "Лайк не поставлен");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, LIKE_NOT_SET);
         }
         film.deleteLike(userId);
     }
 
     public List<Film> getPopularFilms(int count) {
-        return ((FilmStorage) storage).getMostPopular(count);
+        return storage.getAll().stream()
+                .sorted(likeNumberComparator)
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

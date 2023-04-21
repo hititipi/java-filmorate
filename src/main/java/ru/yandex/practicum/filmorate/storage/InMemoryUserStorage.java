@@ -21,10 +21,9 @@ public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implement
 
     @Override
     public Collection<User> getCommonFriends(int id, int otherId) {
-        Collection<User> friends1 = getUserFriends(id);
-        Collection<User> friends2 = getUserFriends(otherId);
-        friends1.retainAll(friends2);
-        return friends1;
+        return getUserFriends(id).stream()
+                .filter(getUserFriends(otherId)::contains)
+                .collect(Collectors.toList());
     }
 
 }

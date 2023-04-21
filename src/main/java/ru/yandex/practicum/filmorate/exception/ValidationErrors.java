@@ -22,5 +22,7 @@ public class ValidationErrors {
     public static final String FILM_DESCRIPTION_INVALID = "Длина описания не может превышать 200 символов";
     public static final String FILM_RELEASE_INVALID = "Некорректная дата релиза";
     public static final String FILM_DURATION_INVALID = "Некорректная продолжительность фильма";
+    public static final String LIKE_ALREADY_SET = "Лайк уже поставлен";
+    public static final String LIKE_NOT_SET = "Лайк не поставлен";
 
 }

@@ -15,15 +15,11 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
 @Slf4j
 @Service
-public class UserService extends ResourceService<User> {
+public class UserService extends ResourceService<User, UserStorage> {
 
     @Autowired
     public UserService(UserStorage storage) {
         this.storage = storage;
-    }
-
-    public UserStorage getStorage() {
-        return ((UserStorage) storage);
     }
 
     @Override
@@ -74,7 +70,7 @@ public class UserService extends ResourceService<User> {
             log.warn(Messages.userNotFound(id));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
-        return getStorage().getUserFriends(id);
+        return storage.getUserFriends(id);
     }
 
     public Collection<User> getCommonFriends(int id, int otherId) {
@@ -86,6 +82,6 @@ public class UserService extends ResourceService<User> {
             log.warn(Messages.userNotFound(otherId));
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
-        return getStorage().getCommonFriends(id, otherId);
+        return storage.getCommonFriends(id, otherId);
     }
 }

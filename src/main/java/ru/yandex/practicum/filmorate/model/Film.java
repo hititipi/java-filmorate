@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.time.DurationMin;
 import ru.yandex.practicum.filmorate.interfaces.Resource;
@@ -24,6 +25,7 @@ public class Film implements Resource {
     private final LocalDate releaseDate;
     @DurationMin(nanos = 1, message = FILM_DURATION_INVALID)
     private final Duration duration;
+    @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 
     @Override

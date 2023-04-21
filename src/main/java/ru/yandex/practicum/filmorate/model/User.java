@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.interfaces.Resource;
 
@@ -25,6 +26,7 @@ public class User implements Resource {
     private final String name;
     @PastOrPresent(message = BIRTHDAY_INVALID)
     private final LocalDate birthday;
+    @JsonIgnore
     private Set<Integer> friends;
 
     public User(String email, String login, String name, LocalDate birthday) {

@@ -13,15 +13,11 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController extends AbstractController<User> {
+public class UserController extends AbstractController<User, UserService> {
 
     @Autowired
     public UserController(UserService service) {
         this.service = service;
-    }
-
-    private UserService getService() {
-        return (UserService) service;
     }
 
     @GetMapping("{id}")
@@ -37,9 +33,9 @@ public class UserController extends AbstractController<User> {
     }
 
     @PostMapping
-    public User createResource(@Valid @RequestBody User film) {
-        log.info(Messages.tryAddResource(film));
-        return super.createResource(film);
+    public User createResource(@Valid @RequestBody User user) {
+        log.info(Messages.tryAddResource(user));
+        return super.createResource(user);
     }
 
     @PutMapping
@@ -51,25 +47,25 @@ public class UserController extends AbstractController<User> {
     @PutMapping("{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info(Messages.addFriend(id, friendId));
-        getService().addFriend(id, friendId);
+        service.addFriend(id, friendId);
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info(Messages.deleteFriend(id, friendId));
-        getService().deleteFriend(id, friendId);
+        service.deleteFriend(id, friendId);
     }
 
     @GetMapping("{id}/friends")
     public Collection<User> getUserFriends(@PathVariable int id) {
         log.info(Messages.getFriends(id));
-        return getService().getUserFriends(id);
+        return service.getUserFriends(id);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info(Messages.getCommonFriends(id, otherId));
-        return getService().getCommonFriends(id, otherId);
+        return service.getCommonFriends(id, otherId);
     }
 
 }

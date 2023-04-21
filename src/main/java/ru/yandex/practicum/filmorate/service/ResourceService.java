@@ -5,15 +5,15 @@ import ru.yandex.practicum.filmorate.interfaces.ResourceStorage;
 
 import java.util.Collection;
 
-public abstract class ResourceService<T extends Resource> {
+public abstract class ResourceService<R extends Resource, S extends ResourceStorage<R>> {
 
-    public ResourceStorage<T> storage;
+    public S storage;
 
-    public T get(int id) {
+    public R get(int id) {
         return storage.get(id);
     }
 
-    public Collection<T> getAll() {
+    public Collection<R> getAll() {
         return storage.getAll();
     }
 
@@ -21,13 +21,13 @@ public abstract class ResourceService<T extends Resource> {
         return storage.contains(id);
     }
 
-    public T createResource(T resource) {
+    public R createResource(R resource) {
         validateResource(resource);
         storage.add(resource);
         return resource;
     }
 
-    public T updateResource(T resource) {
+    public R updateResource(R resource) {
         validateResource(resource);
         return storage.update(resource);
     }
@@ -36,6 +36,6 @@ public abstract class ResourceService<T extends Resource> {
         storage.delete(id);
     }
 
-    public abstract void validateResource(T resource);
+    public abstract void validateResource(R resource);
 
 }
