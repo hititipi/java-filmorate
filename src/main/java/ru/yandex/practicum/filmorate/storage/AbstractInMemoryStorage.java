@@ -17,7 +17,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 @Slf4j
 public class AbstractInMemoryStorage<T extends Resource> implements ResourceStorage<T> {
 
-    final protected Map<Integer, T> resources = new HashMap<>();
+    protected final Map<Integer, T> resources = new HashMap<>();
     private int idCounter = 1;
 
     boolean contains(T resource) {
