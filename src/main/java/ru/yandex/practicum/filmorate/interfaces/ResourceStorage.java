@@ -6,6 +6,8 @@ public interface ResourceStorage<T extends Resource> {
 
     boolean contains(int id);
 
+    void checkContains(int id);
+
     Collection<T> getAll();
 
     T get(int id);

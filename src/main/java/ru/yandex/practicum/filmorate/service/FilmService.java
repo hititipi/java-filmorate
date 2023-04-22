@@ -44,23 +44,9 @@ public class FilmService extends ResourceService<Film, FilmStorage> {
         validateReleaseDate(film.getReleaseDate());
     }
 
-    private void checkContainsFilm(int filmId) {
-        if (!storage.contains(filmId)) {
-            log.warn(Messages.filmNotFound(filmId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-    }
-
-    private void checkContainsUser(int userId) {
-        if (!userStorage.contains(userId)) {
-            log.warn(Messages.userNotFound(userId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-    }
-
     public void addLike(int filmId, int userId) {
-        checkContainsFilm(filmId);
-        checkContainsUser(userId);
+        storage.checkContains(filmId);
+        userStorage.checkContains(userId);
         Film film = storage.get(filmId);
         if (film.containsLike(userId)) {
             log.warn(Messages.likeAlreadySet(filmId, userId));
@@ -70,8 +56,8 @@ public class FilmService extends ResourceService<Film, FilmStorage> {
     }
 
     public void deleteLike(int filmId, int userId) {
-        checkContainsFilm(filmId);
-        checkContainsUser(userId);
+        storage.checkContains(filmId);
+        userStorage.checkContains(userId);
         Film film = storage.get(filmId);
         if (!film.containsLike(userId)) {
             log.warn(Messages.likeNotSet(filmId, userId));

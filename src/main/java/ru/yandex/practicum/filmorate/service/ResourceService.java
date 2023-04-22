@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.interfaces.Resource;
 import ru.yandex.practicum.filmorate.interfaces.ResourceStorage;
 
 import java.util.Collection;
 
+@Slf4j
 public abstract class ResourceService<R extends Resource, S extends ResourceStorage<R>> {
 
-    public S storage;
+    protected S storage;
 
     public R get(int id) {
         return storage.get(id);
@@ -15,10 +17,6 @@ public abstract class ResourceService<R extends Resource, S extends ResourceStor
 
     public Collection<R> getAll() {
         return storage.getAll();
-    }
-
-    boolean containsKey(int id) {
-        return storage.contains(id);
     }
 
     public R createResource(R resource) {

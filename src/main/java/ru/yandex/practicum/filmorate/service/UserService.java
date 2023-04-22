@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.utils.Messages;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
@@ -28,16 +30,10 @@ public class UserService extends ResourceService<User, UserStorage> {
     }
 
     public void addFriend(int id, int friendId) {
-        if (!containsKey(id)) {
-            log.warn(Messages.userNotFound(id));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        if (!containsKey(friendId)) {
-            log.warn(Messages.userNotFound(friendId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
+        storage.checkContains(id);
+        storage.checkContains(friendId);
         User user = get(id);
-        if (user.getFriends().contains(friendId)) {
+        if (user.hasFriend(friendId)) {
             log.warn(Messages.usersAlreadyFriends(id, friendId));
             throw new ValidationException(HttpStatus.BAD_REQUEST, USERS_ALREADY_FRIENDS);
         }
@@ -47,16 +43,10 @@ public class UserService extends ResourceService<User, UserStorage> {
     }
 
     public void deleteFriend(int id, int friendId) {
-        if (!containsKey(id)) {
-            log.warn(Messages.userNotFound(id));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        if (!containsKey(friendId)) {
-            log.warn(Messages.userNotFound(friendId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
+        storage.checkContains(id);
+        storage.checkContains(friendId);
         User user = get(id);
-        if (!user.getFriends().contains(friendId)) {
+        if (!user.hasFriend(friendId)) {
             log.warn(Messages.usersNotFriends(id, friendId));
             throw new ValidationException(HttpStatus.BAD_REQUEST, USERS_NOT_FRIENDS);
         }
@@ -66,22 +56,16 @@ public class UserService extends ResourceService<User, UserStorage> {
     }
 
     public Collection<User> getUserFriends(int id) {
-        if (!containsKey(id)) {
-            log.warn(Messages.userNotFound(id));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        return storage.getUserFriends(id);
+        storage.checkContains(id);
+        Set<Integer> friends = storage.get(id).getFriends();
+        return friends.stream().map(this::get).collect(Collectors.toList());
     }
 
     public Collection<User> getCommonFriends(int id, int otherId) {
-        if (!containsKey(id)) {
-            log.warn(Messages.userNotFound(id));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        if (!containsKey(otherId)) {
-            log.warn(Messages.userNotFound(otherId));
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
-        }
-        return storage.getCommonFriends(id, otherId);
+        Collection<User> friends = getUserFriends(id);
+        Collection<User> userFriends = getUserFriends(otherId);
+        return friends.stream()
+                .filter(userFriends::contains)
+                .collect(Collectors.toList());
     }
 }

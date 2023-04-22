@@ -50,4 +50,8 @@ public class User implements Resource {
         friends.remove(friend);
     }
 
+    public boolean hasFriend(int id) {
+        return friends.contains(id);
+    }
+
 }

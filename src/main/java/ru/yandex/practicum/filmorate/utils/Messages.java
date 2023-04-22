@@ -34,6 +34,10 @@ public class Messages {
         return String.format("Ресурс удален: id =  %d", id);
     }
 
+    public static String resourceNotFound(int id) {
+        return String.format("Ресурс не найден: id = %d", id);
+    }
+
     public static String deleteNotExistingResource(int id) {
         return String.format("Попытка удаления несуществующего ресурса: id = %d", id);
     }
@@ -89,14 +93,6 @@ public class Messages {
 
     public static String invalidReleaseDate(LocalDate date) {
         return String.format("Некорректная дата релиза: %s", date);
-    }
-
-    public static String filmNotFound(int id) {
-        return String.format("Фильм не найден: id = %d", id);
-    }
-
-    public static String userNotFound(int id) {
-        return String.format("Пользователь не найден: id = %d", id);
     }
 
     public static String likeAlreadySet(int filmId, int userId) {

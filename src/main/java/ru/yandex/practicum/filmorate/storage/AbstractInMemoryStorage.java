@@ -29,6 +29,13 @@ public class AbstractInMemoryStorage<T extends Resource> implements ResourceStor
         return resources.containsKey(id);
     }
 
+    public void checkContains(int id) {
+        if (!contains(id)) {
+            log.warn(Messages.resourceNotFound(id));
+            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
+        }
+    }
+
     @Override
     public Collection<T> getAll() {
         return resources.values();
