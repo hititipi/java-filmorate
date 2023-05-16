@@ -1,55 +1,65 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.utils.Messages;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.*;
-
-import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
-public class FilmController extends AbstractController<Film> {
+public class FilmController extends AbstractController<Film, FilmService> {
 
-    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    @Autowired
+    public FilmController(FilmService service) {
+        this.service = service;
+    }
 
-    @Override
     @GetMapping
     public Collection<Film> getAll() {
-        log.info(Messages.getAllFilms(resources.size()));
+        log.info(Messages.getAllFilms());
         return super.getAll();
     }
 
-    @Override
+    @GetMapping("{id}")
+    public Film get(@PathVariable int id) {
+        log.info(Messages.getFilm(id));
+        return super.get(id);
+    }
+
     @PostMapping
     public Film createResource(@Valid @RequestBody Film film) {
         log.info(Messages.tryAddResource(film));
         return super.createResource(film);
     }
 
-    @Override
     @PutMapping
     public Film updateResource(@Valid @RequestBody Film film) {
         log.info(Messages.tryUpdateResource(film));
         return super.updateResource(film);
     }
 
-    private void validateReleaseDate(LocalDate releaseDate) {
-        if (releaseDate != null && MIN_RELEASE_DATE.isAfter(releaseDate)) {
-            log.info(Messages.invalidReleaseDate(releaseDate));
-            throw new ValidationException(FILM_RELEASE_INVALID);
-        }
+    @PutMapping("{filmId}/like/{userId}")
+    public void addLike(@PathVariable int filmId, @PathVariable int userId) {
+        log.info(Messages.addLike(filmId, userId));
+        service.addLike(filmId, userId);
     }
 
-    @Override
-    public void validateResource(Film film) {
-        validateReleaseDate(film.getReleaseDate());
+    @DeleteMapping("{filmId}/like/{userId}")
+    public void deleteLike(@PathVariable int filmId, @PathVariable int userId) {
+        log.info(Messages.deleteLike(filmId, userId));
+        service.deleteLike(filmId, userId);
+    }
+
+    @GetMapping("popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info(Messages.getPopularFilms(count));
+        return service.getPopularFilms(count);
     }
 
 }

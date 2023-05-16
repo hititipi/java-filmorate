@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -22,11 +24,12 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 public class ValidateFilmTest {
 
     private static Validator validator;
-    private static FilmController filmController;
+
+    private static FilmService filmService;
 
     @BeforeAll
     public static void setUp() {
-        filmController = new FilmController();
+        filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
         }
@@ -45,7 +48,7 @@ public class ValidateFilmTest {
         Film film = new Film("film_name", "film_description", LocalDate.now(), Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -71,7 +74,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", description, LocalDate.now(), Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -89,7 +92,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", releaseDate, Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -97,7 +100,7 @@ public class ValidateFilmTest {
         LocalDate invalidReleaseDate = LocalDate.of(1880, 12, 28);
         Film film = new Film("name", "description", invalidReleaseDate, Duration.ofMinutes(100));
         Exception exception = assertThrows(ValidationException.class,
-                () -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+                () -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
         assertEquals(exception.getMessage(), FILM_RELEASE_INVALID, "Неверное сообщение об ошибке");
     }
 
@@ -106,7 +109,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", null, Duration.ofMinutes(100));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
     @Test
@@ -130,7 +133,7 @@ public class ValidateFilmTest {
         Film film = new Film("name", "description", LocalDate.now(), null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
-        assertDoesNotThrow(() -> filmController.validateResource(film), "Ошибка валидации фильма в контролере");
+        assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
     }
 
 }
