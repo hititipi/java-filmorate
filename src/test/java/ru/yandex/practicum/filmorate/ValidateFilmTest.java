@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -45,6 +46,7 @@ public class ValidateFilmTest {
     @Test
     void createValidFilm() {
         Film film = new Film("film_name", "film_description", LocalDate.now(), 100);
+        film.setMpa(new Mpa(1, "G"));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
@@ -53,6 +55,7 @@ public class ValidateFilmTest {
     @Test
     void createFilmWithNullName() {
         Film film = new Film(null, "film_description", LocalDate.now(), 100);
+        film.setMpa(new Mpa(1, "G"));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_NAME_NULL), "Неверное сообщение об ошибке");
@@ -62,6 +65,7 @@ public class ValidateFilmTest {
     @Test
     void createFilmWithEmptyName() {
         Film film = new Film("", "film_description", LocalDate.now(), 100);
+        film.setMpa(new Mpa(1, "G"));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_NAME_EMPTY), "Неверное сообщение об ошибке");
@@ -71,6 +75,7 @@ public class ValidateFilmTest {
     void createFilmWithMaxLengthDescription() {
         String description = "-".repeat(200);
         Film film = new Film("name", description, LocalDate.now(), 100);
+        film.setMpa(new Mpa(1, "G"));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
@@ -80,6 +85,7 @@ public class ValidateFilmTest {
     void createFilmWithInvalidDescription() {
         String description = "-".repeat(210);
         Film film = new Film("name", description, LocalDate.now(), 100);
+        film.setMpa(new Mpa(1, "G"));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_DESCRIPTION_INVALID), "Неверное сообщение об ошибке");
@@ -89,6 +95,7 @@ public class ValidateFilmTest {
     void createFilmWithRelease28_12_1895() {
         LocalDate releaseDate = LocalDate.of(1895, 12, 28);
         Film film = new Film("name", "description", releaseDate, 100);
+        film.setMpa(new Mpa(1, "G"));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
@@ -98,6 +105,7 @@ public class ValidateFilmTest {
     void createFilmWithInvalidRelease() {
         LocalDate invalidReleaseDate = LocalDate.of(1880, 12, 28);
         Film film = new Film("name", "description", invalidReleaseDate, 100);
+        film.setMpa(new Mpa(1, "G"));
         Exception exception = assertThrows(ValidationException.class,
                 () -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
         assertEquals(exception.getMessage(), FILM_RELEASE_INVALID, "Неверное сообщение об ошибке");
@@ -106,6 +114,7 @@ public class ValidateFilmTest {
     @Test
     void createFilmWithNullRelease() {
         Film film = new Film("name", "description", null, 100);
+        film.setMpa(new Mpa(1, "G"));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertDoesNotThrow(() -> filmService.validateResource(film), "Ошибка валидации фильма в контролере");
@@ -113,7 +122,8 @@ public class ValidateFilmTest {
 
     @Test
     void createFilmWithZeroDuration() {
-        Film film = new Film("name", "description", LocalDate.now(), 100);
+        Film film = new Film("name", "description", LocalDate.now(), 0);
+        film.setMpa(new Mpa(1, "G"));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_DURATION_INVALID), "Неверное сообщение об ошибке");
@@ -122,6 +132,7 @@ public class ValidateFilmTest {
     @Test
     void createFilmWithNegativeDuration() {
         Film film = new Film("name", "description", LocalDate.now(), -10);
+        film.setMpa(new Mpa(1, "G"));
         List<String> messages = getValidateErrorMsg(film);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_DURATION_INVALID), "Неверное сообщение об ошибке");

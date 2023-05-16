@@ -37,14 +37,14 @@ public class ValidateUserTest {
 
     @Test
     void createValidUser() {
-        User user = new User("test@mail.ru", "login", "name", LocalDate.now().minusYears(4));
+        User user = new User("login", "name", "test@mail.ru", LocalDate.now().minusYears(4));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
     }
 
     @Test
     void createUserWithNullEmail() {
-        User user = new User(null, "login", "name", LocalDate.now().minusYears(4));
+        User user = new User("login", "name", null, LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
         assertTrue(messages.contains(EMAIL_NULL), "Неверное сообщение об ошибке");
@@ -53,7 +53,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithEmptyEmail() {
-        User user = new User("", "login", "name", LocalDate.now().minusYears(4));
+        User user = new User("login", "name", "", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(EMAIL_EMPTY), "Неверное сообщение об ошибке");
@@ -61,7 +61,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithInvalidEmail() {
-        User user = new User("mail.ru", "login", "name", LocalDate.now().minusYears(4));
+        User user = new User("login", "name", "mail.ru", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(EMAIL_INVALID), "Неверное сообщение об ошибке");
@@ -69,7 +69,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithNullLogin() {
-        User user = new User("test@mail.ru", null, "name", LocalDate.now().minusYears(4));
+        User user = new User(null, "name", "test@mail.ru", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
         assertTrue(messages.contains(LOGIN_NULL), "Неверное сообщение об ошибке");
@@ -78,7 +78,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithEmptyLogin() {
-        User user = new User("test@mail.ru", "", "name", LocalDate.now().minusYears(4));
+        User user = new User("", "name", "test@mail.ru", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 2, "Неверное количество сообщений");
         assertTrue(messages.contains(LOGIN_EMPTY), "Неверное сообщение об ошибке");
@@ -87,7 +87,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithLoginWithSpace() {
-        User user = new User("test@mail.ru", "abc def", "name", LocalDate.now().minusYears(4));
+        User user = new User("abc def", "name", "test@mail.ru", LocalDate.now().minusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(LOGIN_INVALID), "Неверное сообщение об ошибке");
@@ -95,7 +95,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithNullName() {
-        User user = new User("test@mail.ru", "login", null, LocalDate.now().minusYears(4));
+        User user = new User("login", null, "test@mail.ru", LocalDate.now().minusYears(4));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertEquals(user.getName(), user.getLogin(), "Имя отличается от логина");
@@ -103,7 +103,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithEmptyName() {
-        User user = new User("test@mail.ru", "login", "", LocalDate.now().minusYears(4));
+        User user = new User("login", "", "test@mail.ru", LocalDate.now().minusYears(4));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertTrue(violations.isEmpty(), "Ошибка валидации при проверке правильных параметров");
         assertEquals(user.getName(), user.getLogin(), "Имя отличается от логина");
@@ -111,7 +111,7 @@ public class ValidateUserTest {
 
     @Test
     void createUserWithInvalidBirthday() {
-        User user = new User("test@mail.ru", "login", "name", LocalDate.now().plusYears(4));
+        User user = new User("login", "name", "test@mail.ru", LocalDate.now().plusYears(4));
         List<String> messages = getValidateErrorMsg(user);
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(BIRTHDAY_INVALID), "Неверное сообщение об ошибке");
