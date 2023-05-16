@@ -28,8 +28,8 @@ public class FilmService extends ResourceService<Film, FilmStorage> {
     private final UserStorage userStorage;
 
     @Autowired
-    public FilmService( @Qualifier("inMemoryFilmStorage") FilmStorage storage,
-                        @Qualifier("inMemoryUserStorage") UserStorage userStorage) {
+    public FilmService(@Qualifier("inMemoryFilmStorage") FilmStorage storage,
+                       @Qualifier("inMemoryUserStorage") UserStorage userStorage) {
         this.storage = storage;
         this.userStorage = userStorage;
     }
