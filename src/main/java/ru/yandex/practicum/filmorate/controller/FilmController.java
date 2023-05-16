@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.utils.Messages;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -13,11 +14,14 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequestMapping("/films")
-public class FilmController extends AbstractController<Film, FilmService> {
+public class FilmController extends AbstractController<Film, FilmDbService> {
+
+    private final LikeService likeService;
 
     @Autowired
-    public FilmController(FilmService service) {
+    public FilmController(FilmDbService service, LikeService likeService) {
         this.service = service;
+        this.likeService = likeService;
     }
 
     @GetMapping
@@ -47,19 +51,19 @@ public class FilmController extends AbstractController<Film, FilmService> {
     @PutMapping("{filmId}/like/{userId}")
     public void addLike(@PathVariable int filmId, @PathVariable int userId) {
         log.info(Messages.addLike(filmId, userId));
-        service.addLike(filmId, userId);
+        likeService.addLike(filmId, userId);
     }
 
     @DeleteMapping("{filmId}/like/{userId}")
     public void deleteLike(@PathVariable int filmId, @PathVariable int userId) {
         log.info(Messages.deleteLike(filmId, userId));
-        service.deleteLike(filmId, userId);
+        likeService.deleteLike(filmId, userId);
     }
 
     @GetMapping("popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         log.info(Messages.getPopularFilms(count));
-        return service.getPopularFilms(count);
+        return likeService.getMostLikedFilms(count);
     }
 
 }

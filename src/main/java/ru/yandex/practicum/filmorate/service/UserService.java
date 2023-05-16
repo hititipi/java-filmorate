@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -20,7 +21,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 public class UserService extends ResourceService<User, UserStorage> {
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserService(@Qualifier("inMemoryUserStorage") UserStorage storage) {
         this.storage = storage;
     }
 
@@ -46,12 +47,12 @@ public class UserService extends ResourceService<User, UserStorage> {
         storage.checkContains(id);
         storage.checkContains(friendId);
         User user = get(id);
+        User friendUser = get(friendId);
         if (!user.hasFriend(friendId)) {
             log.warn(Messages.usersNotFriends(id, friendId));
             throw new ValidationException(HttpStatus.BAD_REQUEST, USERS_NOT_FRIENDS);
         }
         user.deleteFriend(friendId);
-        User friendUser = get(friendId);
         friendUser.deleteFriend(id);
     }
 

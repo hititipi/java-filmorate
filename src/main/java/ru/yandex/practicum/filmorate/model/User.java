@@ -29,7 +29,7 @@ public class User implements Resource {
     @JsonIgnore
     private Set<Integer> friends;
 
-    public User(String email, String login, String name, LocalDate birthday) {
+    public User(String login, String name, String email, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = (name == null || name.isEmpty()) ? login : name;

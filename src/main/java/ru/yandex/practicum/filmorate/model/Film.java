@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.hibernate.validator.constraints.time.DurationMin;
 import ru.yandex.practicum.filmorate.interfaces.Resource;
 
 import javax.validation.constraints.*;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +21,11 @@ public class Film implements Resource {
     @Size(max = 200, message = FILM_DESCRIPTION_INVALID)
     private final String description;
     private final LocalDate releaseDate;
-    @DurationMin(nanos = 1, message = FILM_DURATION_INVALID)
-    private final Duration duration;
+    @Positive(message = FILM_DURATION_INVALID)
+    private final int duration;
+    @NotNull
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 
