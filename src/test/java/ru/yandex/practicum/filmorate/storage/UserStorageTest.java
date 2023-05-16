@@ -30,6 +30,8 @@ public class UserStorageTest {
     void clearDb() {
         String sql = "DELETE FROM likes";
         jdbcTemplate.update(sql);
+        sql = "DELETE FROM friends";
+        jdbcTemplate.update(sql);
         sql = "DELETE FROM users";
         jdbcTemplate.update(sql);
     }

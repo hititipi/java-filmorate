@@ -33,6 +33,8 @@ public class LikeStorageTest {
     void clearDb() {
         String sql = "DELETE FROM likes";
         jdbcTemplate.update(sql);
+        sql = "DELETE FROM friends";
+        jdbcTemplate.update(sql);
         sql = "DELETE FROM film_genres";
         jdbcTemplate.update(sql);
         sql = "DELETE FROM films";
