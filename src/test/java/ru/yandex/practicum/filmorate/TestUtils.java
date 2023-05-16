@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public class TestUtils {
 
-    public final static Genre[] genres = {
+    public static final Genre[] genres = {
             new Genre(1, "Комедия"),
             new Genre(2, "Драма"),
             new Genre(3, "Мультфильм"),
@@ -18,7 +18,7 @@ public class TestUtils {
             new Genre(6, "Боевик")
     };
 
-    public final static Mpa[] ratings = {
+    public static final Mpa[] ratings = {
             new Mpa(1, "G"),
             new Mpa(2, "PG"),
             new Mpa(3, "PG-13'"),
