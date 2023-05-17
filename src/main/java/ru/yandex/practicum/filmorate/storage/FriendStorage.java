@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 public class FriendStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserRowMapper userRowMapper;
+    private final UserRowMapper userRowMapper = new UserRowMapper();
 
     public Collection<User> getFriends(int id) {
         String sql = "SELECT * " +

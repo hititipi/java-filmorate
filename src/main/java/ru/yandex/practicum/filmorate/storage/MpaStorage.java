@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 public class MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MpaRowMapper mpaRowMapper;
+    private final MpaRowMapper mpaRowMapper = new MpaRowMapper();
 
     public List<Mpa> getAll() {
         String sql = "SELECT * " +

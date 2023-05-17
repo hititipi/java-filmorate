@@ -91,6 +91,22 @@ public class Messages {
         return String.format("Запрос на получение общих друзей: id1 = %d, id2 = %d", id, friendId);
     }
 
+    public static String getAllGenres() {
+        return "Запрос на получение всех жанров.";
+    }
+
+    public static String getGenre(int id) {
+        return String.format("Запрос на получение жанра: id = %d", id);
+    }
+
+    public static String getAllRatings() {
+        return "Запрос на получение всех рейтингов.";
+    }
+
+    public static String getRating(int id) {
+        return String.format("Запрос на получение рейтинга: id = %d", id);
+    }
+
     public static String invalidReleaseDate(LocalDate date) {
         return String.format("Некорректная дата релиза: %s", date);
     }

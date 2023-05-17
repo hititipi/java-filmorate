@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 public class GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final GenreRowMapper genreRowMapper;
+    private final GenreRowMapper genreRowMapper = new GenreRowMapper();
 
     public List<Genre> getAll() {
         String sql = "SELECT * " +

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.utils.Messages;
 
 import java.time.LocalDate;
@@ -21,12 +20,9 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
 
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    private final FilmGenreStorage filmGenreStorage;
-
     @Autowired
-    public FilmDbService(FilmDbStorage storage, FilmGenreStorage filmGenreStorage) {
+    public FilmDbService(FilmDbStorage storage) {
         this.storage = storage;
-        this.filmGenreStorage = filmGenreStorage;
     }
 
     private void validateReleaseDate(LocalDate releaseDate) {
@@ -44,7 +40,7 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
     @Override
     public Film get(int id) {
         Film film = super.get(id);
-        film = filmGenreStorage.loadFilmGenre(film);
+        film = storage.loadFilmGenre(film);
         return film;
     }
 
@@ -52,26 +48,26 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
     public Collection<Film> getAll() {
         Collection<Film> films = super.getAll();
         List<Film> filmLIst = new ArrayList<>(films);
-        return filmGenreStorage.loadFilmGenres(filmLIst);
+        return storage.loadFilmGenres(filmLIst);
     }
 
     @Override
     public Film createResource(Film film) {
         film = super.createResource(film);
-        filmGenreStorage.setFilmGenre(film);
+        storage.setFilmGenre(film);
         return film;
     }
 
     @Override
     public Film updateResource(Film resource) {
         Film film = super.updateResource(resource);
-        filmGenreStorage.updateFilmGenre(film);
+        storage.updateFilmGenre(film);
         return film;
     }
 
     @Override
     public void deleteResource(int id) {
         super.deleteResource(id);
-        filmGenreStorage.deleteFilmGenre(id);
+        storage.deleteFilmGenre(id);
     }
 }

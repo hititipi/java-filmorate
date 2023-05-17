@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -25,11 +23,11 @@ public class ValidateFilmTest {
 
     private static Validator validator;
 
-    private static FilmService filmService;
+    private static FilmDbService filmService;
 
     @BeforeAll
     public static void setUp() {
-        filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+        filmService = new FilmDbService(null);
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
         }
@@ -137,5 +135,4 @@ public class ValidateFilmTest {
         assertEquals(messages.size(), 1, "Неверное количество сообщений");
         assertTrue(messages.contains(FILM_DURATION_INVALID), "Неверное сообщение об ошибке");
     }
-
 }

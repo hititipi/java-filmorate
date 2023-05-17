@@ -20,7 +20,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
 
-    private final UserRowMapper userRowMapper;
+    private final UserRowMapper userRowMapper = new UserRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
     @Override

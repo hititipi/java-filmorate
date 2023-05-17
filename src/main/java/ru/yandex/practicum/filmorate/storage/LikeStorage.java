@@ -17,7 +17,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 public class LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final FilmRowMapper filmRowMapper;
+    private final FilmRowMapper filmRowMapper = new FilmRowMapper();
 
     public void addLike(Integer filmID, Integer userID) {
         String sql = "INSERT INTO likes (film_id, user_id) " +
