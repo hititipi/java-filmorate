@@ -92,4 +92,17 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
             return films;
         } else throw new ValidationException(HttpStatus.BAD_REQUEST, RESOURCE_NOT_FOUND);
     }
+
+    public List<Film> searchFilms(String query, String by) {
+        List<Film> films = new ArrayList<>();
+
+        if (by.split(",").length == 2) {
+            films.addAll(storage.searchFilmByTitleAndDirector(query));
+        } else if (by.equals("title")) {
+            films.addAll(storage.searchFilmByTitle(query));
+        } else if (by.equals("director")) {
+            films.addAll(storage.searchFilmByDirector(query));
+        }
+        return films;
+    }
 }

@@ -66,6 +66,14 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         return likeService.getMostLikedFilms(count);
     }
 
+    @GetMapping("search")
+    public List<Film> getFilmsBySearch(@RequestParam(required = false) String query,
+                                       @RequestParam(required = false) String by) {
+        log.info(Messages.getFilmBySubstring());
+
+        return (query == null && by == null) ? likeService.getAllFilmsSortedByRating() : service.searchFilms(query, by);
+    }
+
     @GetMapping("/director/{directorId}")
     public Collection<Film> getSortedFilms(
             @PathVariable("directorId") Integer directorId, @RequestParam String sortBy) {
