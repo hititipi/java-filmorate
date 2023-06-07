@@ -10,40 +10,8 @@ public class Messages {
         return String.format("Запрос на создание ресурса: %s", resource.getResourceName());
     }
 
-    public static String addAlreadyExistsResource(Resource resource) {
-        return String.format("Попытка создания уже существующего ресурса: %s, id = %d",
-                resource.getResourceName(), resource.getId());
-    }
-
-    public static String resourceAdded(Resource resource) {
-        return String.format("Добавлен ресурс: %s, id =  %d",
-                resource.getResourceName(), resource.getId());
-    }
-
     public static String tryUpdateResource(Resource resource) {
         return String.format("Запрос на обновление ресурса: %s, id = %d",
-                resource.getResourceName(), resource.getId());
-    }
-
-    public static String resourceUpdated(Resource resource) {
-        return String.format("Ресурс обновлен: %s, id =  %d",
-                resource.getResourceName(), resource.getId());
-    }
-
-    public static String resourceDeleted(int id) {
-        return String.format("Ресурс удален: id =  %d", id);
-    }
-
-    public static String resourceNotFound(int id) {
-        return String.format("Ресурс не найден: id = %d", id);
-    }
-
-    public static String deleteNotExistingResource(int id) {
-        return String.format("Попытка удаления несуществующего ресурса: id = %d", id);
-    }
-
-    public static String updateNotExistingResource(Resource resource) {
-        return String.format("Попытка обновления несуществующего ресурса: %s, id = %d",
                 resource.getResourceName(), resource.getId());
     }
 
@@ -111,19 +79,40 @@ public class Messages {
         return String.format("Некорректная дата релиза: %s", date);
     }
 
-    public static String likeAlreadySet(int filmId, int userId) {
-        return String.format("Лайк уже стоит: film_id = %d, user_id = %d", filmId, userId);
+    public static String getAllReviews() {
+        return "Запрос на получение всех отзывов.";
     }
 
-    public static String likeNotSet(int filmId, int userId) {
-        return String.format("Лайк не поставлен: film_id = %d, user_id = %d", filmId, userId);
+    public static String getReview(int id) {
+        return String.format("Запрос на получение отзыва: id = %d", id);
     }
 
-    public static String usersAlreadyFriends(int id, int friendId) {
-        return String.format("Пользователи уже друзья: id1 = %d, id2 = %d", id, friendId);
+    public static String createReview() {
+        return "Запрос на создание отзыва.";
     }
 
-    public static String usersNotFriends(int id, int friendId) {
-        return String.format("Пользователи не друзья: id1 = %d, id2 = %d", id, friendId);
+    public static String updateReview(int id) {
+        return String.format("Запрос на обновление отзыва: id = %d", id);
     }
+
+    public static String deleteReview(int id) {
+        return String.format("Запрос на удаление отзыва: id = %d", id);
+    }
+
+    public static String addReviewLike(int reviewId, int userId) {
+        return String.format("Запрос на добавление лайка на отзыв review_id = %d, user_id = %d", reviewId, userId);
+    }
+
+    public static String addReviewDislike(int reviewId, int userId) {
+        return String.format("Запрос на добавление дислайка на отзыв review_id = %d, user_id = %d", reviewId, userId);
+    }
+
+    public static String removeReviewLike(int reviewId, int userId) {
+        return String.format("Запрос на удаление лайка на отзыв review_id = %d, user_id = %d", reviewId, userId);
+    }
+
+    public static String removeReviewDislike(int reviewId, int userId) {
+        return String.format("Запрос на удаление дислайка на отзыв review_id = %d, user_id = %d", reviewId, userId);
+    }
+
 }
