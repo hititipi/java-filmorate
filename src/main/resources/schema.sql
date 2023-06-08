@@ -109,4 +109,3 @@ CREATE TABLE IF NOT EXISTS events (
     operation_id INTEGER REFERENCES operations(id),
     entity_id INTEGER
 );
-
