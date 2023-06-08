@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.utils.EventType;
+import ru.yandex.practicum.filmorate.utils.Operation;
 
 import java.util.List;
 
@@ -20,6 +24,7 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final FilmDbStorage filmStorage;
     private final UserDbStorage userStorage;
+    private final FeedDbStorage feedDbStorage;
 
     public Review get(int id) {
         return reviewStorage.get(id);
@@ -29,14 +34,41 @@ public class ReviewService {
         if (!filmStorage.contains(review.getFilmId()) || !userStorage.contains(review.getUserId())) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
-        return reviewStorage.add(review);
+        Review created = reviewStorage.add(review);
+        feedDbStorage.addEvent(
+                new Event(
+                        created.getUserId(),
+                        EventType.REVIEW,
+                        Operation.ADD,
+                        created.getReviewId()
+                )
+        );
+        return created;
     }
 
     public Review updateResource(Review review) {
-        return reviewStorage.update(review);
+        Review updated = reviewStorage.update(review);
+        feedDbStorage.addEvent(
+                new Event(
+                        updated.getUserId(),
+                        EventType.REVIEW,
+                        Operation.UPDATE,
+                        updated.getReviewId()
+                )
+        );
+        return updated;
     }
 
     public void deleteResource(int id) {
+        Review review = reviewStorage.get(id);
+        feedDbStorage.addEvent(
+                new Event(
+                        review.getUserId(),
+                        EventType.REVIEW,
+                        Operation.REMOVE,
+                        id
+                )
+        );
         reviewStorage.delete(id);
     }
 
