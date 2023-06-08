@@ -115,4 +115,7 @@ public class Messages {
         return String.format("Запрос на удаление дислайка на отзыв review_id = %d, user_id = %d", reviewId, userId);
     }
 
+    public static String getFeed(int id) {
+        return String.format("Запрос на получение ленты событий: userId = %d", id);
+    }
 }
