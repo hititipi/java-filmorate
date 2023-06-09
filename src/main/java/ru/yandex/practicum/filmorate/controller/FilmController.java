@@ -65,5 +65,4 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         log.info(Messages.getPopularFilms(count));
         return likeService.getMostLikedFilms(count);
     }
-
 }
