@@ -6,9 +6,14 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.utils.EventType;
+import ru.yandex.practicum.filmorate.utils.Operation;
 
 import java.util.*;
 
@@ -25,8 +30,14 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
     public UserDbService(UserDbStorage storage, LikeStorage likeStorage, FriendStorage friendStorage, FilmDbStorage filmDbStorage) {
         this.likeStorage = likeStorage;
         this.filmDbStorage = filmDbStorage;
+
+    private final FeedDbStorage feedDbStorage;
+
+    @Autowired
+    public UserDbService(UserDbStorage storage, FriendStorage friendStorage, FeedDbStorage feedDbStorage) {
         this.storage = storage;
         this.friendStorage = friendStorage;
+        this.feedDbStorage = feedDbStorage;
     }
 
     @Override
@@ -37,10 +48,12 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
         storage.checkContains(id);
         storage.checkContains(friendId);
         friendStorage.addFriend(id, friendId);
+        feedDbStorage.addEvent(new Event(id, EventType.FRIEND, Operation.ADD, friendId));
     }
 
     public void deleteFriend(int id, int friendId) {
         friendStorage.deleteFriend(id, friendId);
+        feedDbStorage.addEvent(new Event(id, EventType.FRIEND, Operation.REMOVE, friendId));
     }
 
     public Collection<User> getUserFriends(int id) {
@@ -103,5 +116,8 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
             if (!userFilms.contains(filmId)) diff.add(filmId);
         }
         return diff;
+    public Collection<Event> getFeed(int id) {
+        storage.checkContains(id);
+        return feedDbStorage.findUserFeed(id);
     }
 }
