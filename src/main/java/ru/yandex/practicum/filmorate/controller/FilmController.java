@@ -66,4 +66,8 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         return likeService.getMostLikedFilms(count);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return service.getCommonFilms(userId, friendId);
+    }
 }

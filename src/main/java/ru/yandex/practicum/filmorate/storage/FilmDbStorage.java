@@ -179,4 +179,14 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sqlQuery = "SELECT f.*, r.* " +
+                "FROM FILMS f " +
+                "JOIN RATINGS r ON  f.RATING_ID  = r.ID " +
+                "LEFT JOIN LIKES l ON f.ID = l.FILM_ID " +
+                "WHERE l.USER_ID IN (?, ?) " +
+                "GROUP BY f.ID " +
+                "HAVING COUNT(l.USER_ID) > 1";
+        return jdbcTemplate.query(sqlQuery, filmRowMapper, userId, friendId);
+    }
 }

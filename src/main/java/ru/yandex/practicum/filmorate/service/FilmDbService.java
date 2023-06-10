@@ -70,4 +70,8 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
         super.deleteResource(id);
         storage.deleteFilmGenre(id);
     }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return storage.getCommonFilms(userId, friendId);
+    }
 }
