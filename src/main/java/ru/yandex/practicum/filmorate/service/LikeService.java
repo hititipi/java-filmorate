@@ -30,6 +30,7 @@ public class LikeService {
     public List<Film> getMostLikedFilms(Integer count) {
         return likeStorage.getMostLikedFilms(count);
     }
+
     public List<Film> getAllFilmsSortedByRating() {
         return likeStorage.getAllFilmsSortedByRating();
     }
