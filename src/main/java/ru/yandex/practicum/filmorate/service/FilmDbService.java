@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static ru.yandex.practicum.filmorate.exception.ValidationErrors.FILM_RELEASE_INVALID;
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
 
 @Slf4j
@@ -34,7 +35,7 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
     private void validateReleaseDate(LocalDate releaseDate) {
         if (releaseDate != null && MIN_RELEASE_DATE.isAfter(releaseDate)) {
             log.info(Messages.invalidReleaseDate(releaseDate));
-            throw new ValidationException(HttpStatus.BAD_REQUEST, RESOURCE_NOT_FOUND);
+            throw new ValidationException(HttpStatus.BAD_REQUEST, FILM_RELEASE_INVALID);
         }
     }
 
