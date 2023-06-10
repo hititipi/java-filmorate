@@ -22,7 +22,6 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 @Service
 @RequiredArgsConstructor
 public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
-
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final DirectorStorage directorStorage;
 
