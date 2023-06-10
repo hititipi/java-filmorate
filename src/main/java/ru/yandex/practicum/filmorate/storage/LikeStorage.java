@@ -45,7 +45,7 @@ public class LikeStorage {
         return jdbcTemplate.query(sql, filmRowMapper, count);
     }
 
-    public List<Film> getAllFilmsSortedByRating(){
+    public List<Film> getAllFilmsSortedByRating() {
         String sql = "SELECT films.*, ratings.name " +
                 "FROM films " +
                 "LEFT JOIN likes ON films.id=likes.film_id " +
