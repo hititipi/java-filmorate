@@ -183,7 +183,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> findDirectorFilmsWithSort(int directorId, String sortBy) {
         String sql;
         if (sortBy.equals("year")) {
-            sql = "SELECT f.*, r.* "+
+            sql = "SELECT f.*, r.* " +
                     "FROM film_directors fd " +
                     "JOIN films f ON f.id = fd.film_id " +
                     "JOIN ratings r ON f.rating_id = r.id " +
