@@ -70,7 +70,6 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
     public List<Film> getFilmsBySearch(@RequestParam(required = false) String query,
                                        @RequestParam(required = false) String by) {
         log.info(Messages.getFilmBySubstring());
-
         return (query == null && by == null) ? likeService.getAllFilmsSortedByRating() : service.searchFilms(query, by);
     }
 
