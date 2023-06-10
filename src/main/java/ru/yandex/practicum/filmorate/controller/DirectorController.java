@@ -43,7 +43,6 @@ public class DirectorController {
 
     @DeleteMapping("{id}")
     public void deleteResource(@PathVariable int id) {
-        log.info(Messages.resourceDeleted(id));
         directorService.delete(id);
     }
 }
