@@ -10,13 +10,14 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class FilmDbStorage implements FilmStorage {
     public Collection<Film> getAll() {
         String sql = "SELECT films.*, ratings.* " +
                 "FROM films " +
-                "JOIN ratings on ratings.id = films.rating_id;";
+                "JOIN ratings on ratings.id = films.rating_id";
         return jdbcTemplate.query(sql, filmRowMapper);
     }
 
@@ -179,4 +180,33 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    public List<Film> findDirectorFilmsWithSort(int directorId, String sortBy) {
+        String sql;
+        if (sortBy.equals("year")) {
+            sql = "SELECT f.*, r.* " +
+                    "FROM film_directors fd " +
+                    "JOIN films f ON f.id = fd.film_id " +
+                    "JOIN ratings r ON f.rating_id = r.id " +
+                    "WHERE director_id = ? " +
+                    "ORDER BY year(f.release_date)";
+
+        } else if (sortBy.equals("likes")) {
+            sql = "SELECT f.*, r.*," +
+                    "(SELECT count(*) FROM likes WHERE fd.film_id = likes.film_id) AS likes " +
+                    "FROM film_directors fd " +
+                    "JOIN films f ON f.id = fd.film_id " +
+                    "JOIN ratings r ON f.rating_id = r.id " +
+                    "WHERE director_id = ? " +
+                    "ORDER BY likes DESC";
+
+        } else {
+            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
+        }
+
+        return jdbcTemplate.query(
+                sql,
+                new FilmRowMapper(),
+                directorId
+        );
+    }
 }
