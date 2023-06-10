@@ -25,4 +25,7 @@ public class ValidationErrors {
     public static final String LIKE_ALREADY_SET = "Лайк уже поставлен";
     public static final String LIKE_NOT_SET = "Лайк не поставлен";
 
+    // directors errors
+    public static final String DIRECTOR_NAME_EMPTY = "Имя режиссёра не может быть пустым";
+
 }

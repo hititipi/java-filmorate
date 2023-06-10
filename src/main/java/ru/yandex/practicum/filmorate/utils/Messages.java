@@ -126,4 +126,16 @@ public class Messages {
     public static String usersNotFriends(int id, int friendId) {
         return String.format("Пользователи не друзья: id1 = %d, id2 = %d", id, friendId);
     }
+
+    public static String getAllDirectors() {
+        return "Запрос на получение всех режиссёров.";
+    }
+
+    public static String getDirector(int id) {
+        return String.format("Запрос на получение режиссёра: id = %d", id);
+    }
+
+    public static String getSortedFilms(String sortBy) {
+        return String.format("Запрос на получение списка отсортированных фильмов: по признаку " + sortBy);
+    }
 }
