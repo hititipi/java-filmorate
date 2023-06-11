@@ -15,6 +15,32 @@ public class Messages {
                 resource.getResourceName(), resource.getId());
     }
 
+    public static String resourceUpdated(Resource resource) {
+        return String.format("Ресурс обновлен: %s, id =  %d",
+                resource.getResourceName(), resource.getId());
+    }
+
+    public static String resourceDeleted(int id) {
+        return String.format("Ресурс удален: id =  %d", id);
+    }
+
+    public static String resourceNotFound(int id) {
+        return String.format("Ресурс не найден: id = %d", id);
+    }
+
+    public static String deleteNotExistingResource(int id) {
+        return String.format("Попытка удаления несуществующего ресурса: id = %d", id);
+    }
+
+    public static String getFilmBySubstring() {
+        return String.format("Получен запрос на поиск фильма");
+    }
+
+    public static String updateNotExistingResource(Resource resource) {
+        return String.format("Попытка обновления несуществующего ресурса: %s, id = %d",
+                resource.getResourceName(), resource.getId());
+    }
+
     public static String getAllFilms() {
         return "Запрос на получение всех фильмов.";
     }
@@ -31,8 +57,13 @@ public class Messages {
         return String.format("Запрос на удаление лайка: film_id = %d, user_id = %d", filmId, userId);
     }
 
-    public static String getPopularFilms(int count) {
-        return String.format("Запрос на получение списка популярных фильмов: количество = %d", count);
+    public static String getPopularFilms(int count, int genreId, int year) {
+        return String.format(
+                "Запрос на получение списка популярных фильмов: количество = %d, genreId = %d, год = %d",
+                count,
+                genreId,
+                year
+        );
     }
 
     public static String getAllUsers() {
@@ -117,5 +148,17 @@ public class Messages {
 
     public static String getFeed(int id) {
         return String.format("Запрос на получение ленты событий: userId = %d", id);
+    }
+
+    public static String getAllDirectors() {
+        return "Запрос на получение всех режиссёров.";
+    }
+
+    public static String getDirector(int id) {
+        return String.format("Запрос на получение режиссёра: id = %d", id);
+    }
+
+    public static String getSortedFilms(String sortBy) {
+        return String.format("Запрос на получение списка отсортированных фильмов: по признаку " + sortBy);
     }
 }
