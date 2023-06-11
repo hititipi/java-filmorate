@@ -96,4 +96,21 @@ public class LikeStorage {
                 "ORDER BY COUNT(likes.user_id) DESC ";
         return jdbcTemplate.query(sql, filmRowMapper);
     }
+
+    public Map<Integer, List<Integer>> getSameLikesByUser(int userId) {
+        String sqlQuery = "SELECT * FROM likes " +
+                "WHERE user_id IN " +
+                "(SELECT DISTINCT user_id FROM likes " +
+                "WHERE film_id IN " +
+                "(SELECT film_id FROM likes " +
+                "WHERE user_id = ?))";
+        Map<Integer, List<Integer>> likes = new HashMap<>();
+        jdbcTemplate.query(sqlQuery, rs -> {
+            int id = rs.getInt("user_id");
+            int filmId = rs.getInt("film_id");
+            likes.putIfAbsent(id, new ArrayList<>());
+            likes.get(id).add(filmId);
+        }, userId);
+        return likes;
+    }
 }
