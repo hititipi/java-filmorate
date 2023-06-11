@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.utils.Messages;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.*;
 
 @Slf4j
@@ -61,9 +62,11 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
     }
 
     @GetMapping("popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        log.info(Messages.getPopularFilms(count));
-        return likeService.getMostLikedFilms(count);
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count,
+                                      @RequestParam(required = false, defaultValue = "0") @Positive int genreId,
+                                      @RequestParam(required = false, defaultValue = "0") @Positive int year) {
+        log.info(Messages.getPopularFilms(count, genreId, year));
+        return likeService.getMostLikedFilms(count, genreId, year);
     }
 
     @GetMapping("search")

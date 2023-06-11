@@ -45,6 +45,45 @@ public class LikeStorage {
         return jdbcTemplate.query(sql, filmRowMapper, count);
     }
 
+    public List<Film> getPopularByGenre(int count, int genreId) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "JOIN film_genres ON film_genres.film_id = films.id " +
+                "WHERE film_genres.genre_id = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, genreId, count);
+    }
+
+    public List<Film> getPopularByYear(int count, int year) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "WHERE EXTRACT(year FROM CAST(films.release_date AS date)) = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, year, count);
+    }
+
+    public List<Film> getPopularByGenreAndYear(int count, int genreId, int year) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "JOIN film_genres ON film_genres.film_id = films.id " +
+                "WHERE film_genres.genre_id = ? " +
+                "AND EXTRACT(year FROM CAST(films.release_date AS date)) = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, genreId, year, count);
+    }
+
     public List<Film> getAllFilmsSortedByRating() {
         String sql = "SELECT films.*, ratings.name " +
                 "FROM films " +

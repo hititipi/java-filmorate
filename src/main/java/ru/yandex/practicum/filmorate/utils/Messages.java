@@ -57,8 +57,13 @@ public class Messages {
         return String.format("Запрос на удаление лайка: film_id = %d, user_id = %d", filmId, userId);
     }
 
-    public static String getPopularFilms(int count) {
-        return String.format("Запрос на получение списка популярных фильмов: количество = %d", count);
+    public static String getPopularFilms(int count, int genreId, int year) {
+        return String.format(
+                "Запрос на получение списка популярных фильмов: количество = %d, genreId = %d, год = %d",
+                count,
+                genreId,
+                year
+        );
     }
 
     public static String getAllUsers() {
