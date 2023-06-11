@@ -15,6 +15,32 @@ public class Messages {
                 resource.getResourceName(), resource.getId());
     }
 
+    public static String resourceUpdated(Resource resource) {
+        return String.format("Ресурс обновлен: %s, id =  %d",
+                resource.getResourceName(), resource.getId());
+    }
+
+    public static String resourceDeleted(int id) {
+        return String.format("Ресурс удален: id =  %d", id);
+    }
+
+    public static String resourceNotFound(int id) {
+        return String.format("Ресурс не найден: id = %d", id);
+    }
+
+    public static String deleteNotExistingResource(int id) {
+        return String.format("Попытка удаления несуществующего ресурса: id = %d", id);
+    }
+
+    public static String getFilmBySubstring() {
+        return String.format("Получен запрос на поиск фильма");
+    }
+
+    public static String updateNotExistingResource(Resource resource) {
+        return String.format("Попытка обновления несуществующего ресурса: %s, id = %d",
+                resource.getResourceName(), resource.getId());
+    }
+
     public static String getAllFilms() {
         return "Запрос на получение всех фильмов.";
     }

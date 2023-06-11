@@ -33,6 +33,7 @@ public class FilmDbStorage implements FilmStorage {
     private final FilmRowMapper filmRowMapper = new FilmRowMapper();
     private final GenreMapper genreMapper = new GenreMapper();
     private final JdbcTemplate jdbcTemplate;
+    private final DirectorStorage directorStorage;
 
     @Override
     public boolean contains(int id) {
@@ -179,6 +180,36 @@ public class FilmDbStorage implements FilmStorage {
         }
         return films;
     }
+
+    public List<Film> searchFilmByTitle(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*, ratings.* FROM films join ratings on films.rating_id = ratings.id  WHERE LCASE(films.name) LIKE ? ";
+        return jdbcTemplate.query(sqlQuery, filmRowMapper, query);
+    }
+
+
+    public List<Film> searchFilmByTitleAndDirector(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*, ratings.* " +
+                "FROM films  " +
+                "LEFT JOIN ratings ON films.rating_id = ratings.id  " +
+                "LEFT JOIN film_directors  ON films.id = film_directors.film_id " +
+                "LEFT JOIN directors ON film_directors.director_id = directors.id " +
+                "WHERE LCASE(films.name) LIKE ? OR LCASE(directors.name) LIKE ? " +
+                "ORDER BY films.id DESC";
+
+        return directorStorage.loadFilmDirectors(loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper, query, query)));
+    }
+
+    public List<Film> searchFilmByDirector(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*,ratings.* FROM films join ratings on films.rating_id = ratings.id  " +
+                "JOIN film_directors ON films.id = film_directors.film_id " +
+                "JOIN directors  on film_directors.director_id = directors.id  WHERE LCASE(directors.name) LIKE ? ";
+        return directorStorage.loadFilmDirectors(loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper, query)));
+
+    }
+
 
     public List<Film> findDirectorFilmsWithSort(int directorId, String sortBy) {
         String sql;
