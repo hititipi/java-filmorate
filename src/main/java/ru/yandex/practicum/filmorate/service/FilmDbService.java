@@ -76,9 +76,17 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
         return film;
     }
 
+    public void deleteFilm(int id) {
+        //super.deleteResource(id);
+        storage.delete(id);
+        storage.deleteFilmGenre(id);
+        directorStorage.deleteFilmDirectors(id);
+    }
+
     @Override
     public void deleteResource(int id) {
-        super.deleteResource(id);
+        //super.deleteResource(id);
+        storage.delete(id);
         storage.deleteFilmGenre(id);
         directorStorage.deleteFilmDirectors(id);
     }

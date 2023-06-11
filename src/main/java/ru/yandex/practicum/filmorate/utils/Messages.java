@@ -49,6 +49,10 @@ public class Messages {
         return String.format("Запрос на получение фильма: id = %d", id);
     }
 
+    public static String deleteFilm(int id) {
+        return String.format("Запрос на удаление фильма: id = %d", id);
+    }
+
     public static String addLike(int filmId, int userId) {
         return String.format("Запрос на добавление лайка: film_id = %d, user_id = %d", filmId, userId);
     }
@@ -72,6 +76,10 @@ public class Messages {
 
     public static String getUser(int id) {
         return String.format("Запрос на получение пользователя: id = %d", id);
+    }
+
+    public static String deleteUser(int id) {
+        return String.format("Запрос на удаление пользователя: id = %d", id);
     }
 
     public static String addFriend(int id, int friendId) {

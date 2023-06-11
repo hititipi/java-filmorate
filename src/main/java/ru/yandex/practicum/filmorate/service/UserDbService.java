@@ -34,6 +34,11 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
         this.feedDbStorage = feedDbStorage;
     }
 
+    public void deleteUser(int id) {
+        storage.delete(id);
+    }
+
+
     @Override
     public void validateResource(User resource) {
     }

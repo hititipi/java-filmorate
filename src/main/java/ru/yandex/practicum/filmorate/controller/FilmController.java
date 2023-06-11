@@ -49,6 +49,14 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         return super.updateResource(film);
     }
 
+
+
+    @DeleteMapping("{id}")
+    public void deleteFilm(@PathVariable int id) {
+        log.info(Messages.deleteFilm(id));
+        service.deleteFilm(id);
+    }
+
     @PutMapping("{filmId}/like/{userId}")
     public void addLike(@PathVariable int filmId, @PathVariable int userId) {
         log.info(Messages.addLike(filmId, userId));

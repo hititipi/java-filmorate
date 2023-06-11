@@ -46,6 +46,12 @@ public class UserController extends AbstractController<User, UserDbService> {
         return super.updateResource(user);
     }
 
+    @DeleteMapping("{id}")
+    public void deleteResource(@PathVariable int id) {
+        log.info(Messages.deleteUser(id));
+        service.deleteUser(id);
+    }
+
     @PutMapping("{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info(Messages.addFriend(id, friendId));

@@ -22,8 +22,12 @@ public class LikeStorage {
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper filmRowMapper = new FilmRowMapper();
 
+    public boolean contains(int filmId, int userId){
+        return false;
+    }
+
     public void addLike(Integer filmID, Integer userID) {
-        String sql = "INSERT INTO likes (film_id, user_id) " +
+        String sql = "MERGE INTO likes (film_id, user_id) " +
                 "VALUES (?,?)";
         jdbcTemplate.update(sql, filmID, userID);
     }
