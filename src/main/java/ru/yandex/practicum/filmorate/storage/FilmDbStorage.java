@@ -181,9 +181,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-
-    //Переделать под реализацию Вики
-
     public List<Film> searchFilmByTitle(String query) {
         query = "%" + query.toLowerCase() + "%";
         String sqlQuery = "SELECT films.*, ratings.* FROM films join ratings on films.rating_id = ratings.id  WHERE LCASE(films.name) LIKE ? ";
