@@ -12,9 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.utils.Messages;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.FILM_RELEASE_INVALID;
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
@@ -23,6 +21,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 @Service
 @RequiredArgsConstructor
 public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
+
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final DirectorStorage directorStorage;
 
@@ -104,5 +103,9 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
             films.addAll(storage.searchFilmByDirector(query));
         }
         return films;
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return storage.getCommonFilms(userId, friendId);
     }
 }

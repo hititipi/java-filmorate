@@ -82,4 +82,9 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         log.info(Messages.getSortedFilms(sortBy));
         return service.getDirectorFilmsWithSort(directorId, sortBy);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return service.getCommonFilms(userId, friendId);
+    }
 }

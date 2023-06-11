@@ -250,4 +250,15 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE f.id IN  (" + idsStr + ");";
         return loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper));
     }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sqlQuery = "SELECT f.*, r.* " +
+                "FROM films f " +
+                "JOIN ratings r ON  f.rating_id  = r.id " +
+                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "WHERE l.user_id IN (?, ?) " +
+                "GROUP BY f.id " +
+                "HAVING COUNT(l.user_id) > 1";
+        return jdbcTemplate.query(sqlQuery, filmRowMapper, userId, friendId);
+    }
 }
