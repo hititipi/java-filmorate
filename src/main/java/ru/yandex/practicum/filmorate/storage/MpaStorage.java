@@ -36,5 +36,4 @@ public class MpaStorage {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
     }
-
 }

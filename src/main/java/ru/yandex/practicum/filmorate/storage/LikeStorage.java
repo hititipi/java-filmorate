@@ -8,7 +8,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
 
@@ -45,4 +48,69 @@ public class LikeStorage {
         return jdbcTemplate.query(sql, filmRowMapper, count);
     }
 
+    public List<Film> getPopularByGenre(int count, int genreId) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "JOIN film_genres ON film_genres.film_id = films.id " +
+                "WHERE film_genres.genre_id = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, genreId, count);
+    }
+
+    public List<Film> getPopularByYear(int count, int year) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "WHERE EXTRACT(year FROM CAST(films.release_date AS date)) = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, year, count);
+    }
+
+    public List<Film> getPopularByGenreAndYear(int count, int genreId, int year) {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "JOIN film_genres ON film_genres.film_id = films.id " +
+                "WHERE film_genres.genre_id = ? " +
+                "AND EXTRACT(year FROM CAST(films.release_date AS date)) = ? " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, filmRowMapper, genreId, year, count);
+    }
+
+    public List<Film> getAllFilmsSortedByRating() {
+        String sql = "SELECT films.*, ratings.name " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.id=likes.film_id " +
+                "JOIN ratings ON ratings.id = films.rating_id " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.user_id) DESC ";
+        return jdbcTemplate.query(sql, filmRowMapper);
+    }
+
+    public Map<Integer, List<Integer>> getSameLikesByUser(int userId) {
+        String sqlQuery = "SELECT * FROM likes " +
+                "WHERE user_id IN " +
+                "(SELECT DISTINCT user_id FROM likes " +
+                "WHERE film_id IN " +
+                "(SELECT film_id FROM likes " +
+                "WHERE user_id = ?))";
+        Map<Integer, List<Integer>> likes = new HashMap<>();
+        jdbcTemplate.query(sqlQuery, rs -> {
+            int id = rs.getInt("user_id");
+            int filmId = rs.getInt("film_id");
+            likes.putIfAbsent(id, new ArrayList<>());
+            likes.get(id).add(filmId);
+        }, userId);
+        return likes;
+    }
 }

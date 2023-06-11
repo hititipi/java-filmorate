@@ -96,5 +96,4 @@ public class UserDbStorage implements UserStorage {
                 "WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
-
 }
