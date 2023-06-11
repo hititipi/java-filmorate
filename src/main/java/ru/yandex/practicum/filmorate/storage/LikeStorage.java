@@ -8,7 +8,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
 
@@ -94,4 +97,20 @@ public class LikeStorage {
         return jdbcTemplate.query(sql, filmRowMapper);
     }
 
+    public Map<Integer, List<Integer>> getSameLikesByUser(int userId) {
+        String sqlQuery = "SELECT * FROM likes " +
+                "WHERE user_id IN " +
+                "(SELECT DISTINCT user_id FROM likes " +
+                "WHERE film_id IN " +
+                "(SELECT film_id FROM likes " +
+                "WHERE user_id = ?))";
+        Map<Integer, List<Integer>> likes = new HashMap<>();
+        jdbcTemplate.query(sqlQuery, rs -> {
+            int id = rs.getInt("user_id");
+            int filmId = rs.getInt("film_id");
+            likes.putIfAbsent(id, new ArrayList<>());
+            likes.get(id).add(filmId);
+        }, userId);
+        return likes;
+    }
 }

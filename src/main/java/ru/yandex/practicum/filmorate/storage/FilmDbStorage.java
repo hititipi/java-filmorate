@@ -210,7 +210,6 @@ public class FilmDbStorage implements FilmStorage {
 
     }
 
-
     public List<Film> findDirectorFilmsWithSort(int directorId, String sortBy) {
         String sql;
         if (sortBy.equals("year")) {
@@ -239,5 +238,16 @@ public class FilmDbStorage implements FilmStorage {
                 new FilmRowMapper(),
                 directorId
         );
+    }
+
+    public List<Film> getByListId(List<Integer> filmIds) {
+        String idsStr = filmIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String sqlQuery = "SELECT f.*, r.*" +
+                "FROM films AS f " +
+                "JOIN ratings AS r on r.id = f.rating_id " +
+                "WHERE f.id IN  (" + idsStr + ");";
+        return loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper));
     }
 }
