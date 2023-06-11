@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
@@ -18,6 +19,7 @@ public class LikeService {
     private final LikeStorage likeStorage;
     private final FeedDbStorage feedDbStorage;
     private final FilmDbStorage filmDbStorage;
+    private final DirectorStorage directorStorage;
 
     public void addLike(Integer filmID, Integer userID) {
         likeStorage.addLike(filmID, userID);
@@ -40,7 +42,7 @@ public class LikeService {
                     likeStorage.getMostLikedFilms(count) :
                     likeStorage.getPopularByYear(count, year);
         }
-        return filmDbStorage.loadFilmGenres(films);
+        return directorStorage.loadFilmDirectors(filmDbStorage.loadFilmGenres(films));
     }
 
     public List<Film> getAllFilmsSortedByRating() {

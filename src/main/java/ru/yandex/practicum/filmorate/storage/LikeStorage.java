@@ -83,6 +83,7 @@ public class LikeStorage {
                 "LIMIT ?";
         return jdbcTemplate.query(sql, filmRowMapper, genreId, year, count);
     }
+
     public List<Film> getAllFilmsSortedByRating() {
         String sql = "SELECT films.*, ratings.name " +
                 "FROM films " +
