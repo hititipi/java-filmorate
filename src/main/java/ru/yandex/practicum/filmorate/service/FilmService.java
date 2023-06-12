@@ -22,7 +22,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 public class FilmService {
 
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    private final FilmDbStorage filmDbStorage;
+    private final FilmDbStorage filmStorage;
     private final DirectorStorage directorStorage;
 
     private void validateReleaseDate(LocalDate releaseDate) {
@@ -37,46 +37,46 @@ public class FilmService {
     }
 
     public Film getFilm(int id) {
-        Film film = filmDbStorage.getFilm(id);
-        film = filmDbStorage.loadFilmGenre(film);
+        Film film = filmStorage.getFilm(id);
+        film = filmStorage.loadFilmGenre(film);
         film = directorStorage.loadFilmDirectors(film);
         return film;
     }
 
     public Collection<Film> getAllFilms() {
-        Collection<Film> films = filmDbStorage.getAllFilms();
+        Collection<Film> films = filmStorage.getAllFilms();
         List<Film> filmLIst = new ArrayList<>(films);
-        filmLIst = filmDbStorage.loadFilmGenres(filmLIst);
+        filmLIst = filmStorage.loadFilmGenres(filmLIst);
         filmLIst = directorStorage.loadFilmDirectors(filmLIst);
         return filmLIst;
     }
 
     public Film createFilm(Film film) {
         validateFilm(film);
-        film = filmDbStorage.createFilm(film);
-        filmDbStorage.setFilmGenre(film);
+        film = filmStorage.createFilm(film);
+        filmStorage.setFilmGenre(film);
         directorStorage.setFilmDirectors(film);
         return film;
     }
 
     public Film updateFilm(Film film) {
         validateFilm(film);
-        Film updateFilm = filmDbStorage.updateFilm(film);
-        filmDbStorage.updateFilmGenre(updateFilm);
+        Film updateFilm = filmStorage.updateFilm(film);
+        filmStorage.updateFilmGenre(updateFilm);
         directorStorage.updateFilmDirectors(updateFilm);
         return updateFilm;
     }
 
     public void deleteFilm(int id) {
-        filmDbStorage.deleteFilm(id);
-        filmDbStorage.deleteFilmGenre(id);
+        filmStorage.deleteFilm(id);
+        filmStorage.deleteFilmGenre(id);
         directorStorage.deleteFilmDirectors(id);
     }
 
     public List<Film> getDirectorFilmsWithSort(int directorId, String sortBy) {
         if (directorStorage.findById(directorId) != null) {
-            List<Film> films = filmDbStorage.findDirectorFilmsWithSort(directorId, sortBy);
-            films = filmDbStorage.loadFilmGenres(films);
+            List<Film> films = filmStorage.findDirectorFilmsWithSort(directorId, sortBy);
+            films = filmStorage.loadFilmGenres(films);
             films = directorStorage.loadFilmDirectors(films);
             return films;
         } else throw new ValidationException(HttpStatus.BAD_REQUEST, RESOURCE_NOT_FOUND);
@@ -86,16 +86,16 @@ public class FilmService {
         List<Film> films = new ArrayList<>();
 
         if (by.split(",").length == 2) {
-            films.addAll(filmDbStorage.searchFilmByTitleAndDirector(query));
+            films.addAll(filmStorage.searchFilmByTitleAndDirector(query));
         } else if (by.equals("title")) {
-            films.addAll(filmDbStorage.searchFilmByTitle(query));
+            films.addAll(filmStorage.searchFilmByTitle(query));
         } else if (by.equals("director")) {
-            films.addAll(filmDbStorage.searchFilmByDirector(query));
+            films.addAll(filmStorage.searchFilmByDirector(query));
         }
         return films;
     }
 
     public List<Film> getCommonFilms(int userId, int friendId) {
-        return filmDbStorage.getCommonFilms(userId, friendId);
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }

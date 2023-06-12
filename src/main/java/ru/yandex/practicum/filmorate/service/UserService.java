@@ -21,36 +21,36 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserDbStorage userDbStorage;
+    private final UserDbStorage userStorage;
     private final LikeStorage likeStorage;
     private final FriendStorage friendStorage;
     private final FilmDbStorage filmDbStorage;
     private final FeedDbStorage feedDbStorage;
 
     public User getUser(int id) {
-        return userDbStorage.getUser(id);
+        return userStorage.getUser(id);
     }
 
     public Collection<User> getAllUsers() {
-        return userDbStorage.getAllUsers();
+        return userStorage.getAllUsers();
     }
 
     public User createUser(User user) {
-        userDbStorage.addUser(user);
+        userStorage.addUser(user);
         return user;
     }
 
     public User updateUser(User user) {
-        return userDbStorage.updateUser(user);
+        return userStorage.updateUser(user);
     }
 
     public void deleteUser(int id) {
-        userDbStorage.deleteUser(id);
+        userStorage.deleteUser(id);
     }
 
     public void addFriend(int id, int friendId) {
-        userDbStorage.checkContains(id);
-        userDbStorage.checkContains(friendId);
+        userStorage.checkContains(id);
+        userStorage.checkContains(friendId);
         friendStorage.addFriend(id, friendId);
         feedDbStorage.addEvent(new Event(id, EventType.FRIEND, Operation.ADD, friendId));
     }
@@ -61,7 +61,7 @@ public class UserService {
     }
 
     public Collection<User> getUserFriends(int id) {
-        userDbStorage.checkContains(id);
+        userStorage.checkContains(id);
         return friendStorage.getFriends(id);
     }
 
@@ -70,12 +70,12 @@ public class UserService {
     }
 
     public Collection<Event> getFeed(int id) {
-        userDbStorage.checkContains(id);
+        userStorage.checkContains(id);
         return feedDbStorage.findUserFeed(id);
     }
 
     public List<Film> getRecommendations(int userId) {
-        userDbStorage.checkContains(userId);
+        userStorage.checkContains(userId);
         log.info("Recommendations Films от User с id = " + userId);
         Map<Integer, List<Integer>> likes = likeStorage.getSameLikesByUser(userId);
         List<Integer> userFilms = likes.remove(userId);
