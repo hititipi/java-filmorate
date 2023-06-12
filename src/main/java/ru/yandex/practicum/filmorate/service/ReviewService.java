@@ -26,11 +26,11 @@ public class ReviewService {
     private final UserDbStorage userStorage;
     private final FeedDbStorage feedDbStorage;
 
-    public Review get(int id) {
+    public Review getReview(int id) {
         return reviewStorage.get(id);
     }
 
-    public Review createResource(Review review) {
+    public Review createReview(Review review) {
         if (!filmStorage.contains(review.getFilmId()) || !userStorage.contains(review.getUserId())) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
@@ -46,7 +46,7 @@ public class ReviewService {
         return created;
     }
 
-    public Review updateResource(Review review) {
+    public Review updateReview(Review review) {
         Review updated = reviewStorage.update(review);
         feedDbStorage.addEvent(
                 new Event(
@@ -59,7 +59,7 @@ public class ReviewService {
         return updated;
     }
 
-    public void deleteResource(int id) {
+    public void deleteReview(int id) {
         Review review = reviewStorage.get(id);
         feedDbStorage.addEvent(
                 new Event(

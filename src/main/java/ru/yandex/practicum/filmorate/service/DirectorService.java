@@ -10,22 +10,23 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DirectorService {
+
     private final DirectorStorage directorStorage;
 
-    public Director getDirectorById(int id) {
+    public Director getDirector(int id) {
         return directorStorage.findById(id);
     }
 
-    public List<Director> getAll() {
+    public List<Director> getAllDirectors() {
         return directorStorage.findAll();
     }
 
-    public Director createResource(Director director) {
+    public Director createDirector(Director director) {
         directorStorage.add(director);
         return director;
     }
 
-    public void delete(int id) {
+    public void deleteDirector(int id) {
         directorStorage.delete(id);
     }
 

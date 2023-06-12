@@ -20,34 +20,34 @@ public class ReviewController {
     private final ReviewService service;
 
     @GetMapping("{id}")
-    public Review get(@PathVariable int id) {
+    public Review getReview(@PathVariable int id) {
         log.info(Messages.getReview(id));
-        return service.get(id);
+        return service.getReview(id);
     }
 
     @GetMapping()
-    public List<Review> getAll(@RequestParam(required = false, defaultValue = "0") int filmId,
-                               @RequestParam(required = false, defaultValue = "10") @Positive int count) {
+    public List<Review> getAllReviews(@RequestParam(required = false, defaultValue = "0") int filmId,
+                                      @RequestParam(required = false, defaultValue = "10") @Positive int count) {
         log.info(Messages.getAllReviews());
         return service.getPopularReviewsByFilmId(filmId, count);
     }
 
     @PostMapping
-    public Review createResource(@Valid @RequestBody Review review) {
+    public Review createReview(@Valid @RequestBody Review review) {
         log.info(Messages.createReview());
-        return service.createResource(review);
+        return service.createReview(review);
     }
 
     @PutMapping
-    public Review updateResource(@Valid @RequestBody Review review) {
+    public Review updateReview(@Valid @RequestBody Review review) {
         log.info(Messages.updateReview(review.getReviewId()));
-        return service.updateResource(review);
+        return service.updateReview(review);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable int id) {
+    public void deleteReview(@PathVariable int id) {
         log.info(Messages.deleteReview(id));
-        service.deleteResource(id);
+        service.deleteReview(id);
     }
 
     @PutMapping("/{reviewId}/like/{userId}")

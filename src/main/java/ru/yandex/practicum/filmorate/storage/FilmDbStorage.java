@@ -35,14 +35,12 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final DirectorStorage directorStorage;
 
-    @Override
     public boolean contains(int id) {
         String sql = "SELECT count(*) FROM films WHERE id = ?";
         Integer result = jdbcTemplate.queryForObject(sql, Integer.class, id);
         return result != null && result == 1;
     }
 
-    @Override
     public void checkContains(int id) {
         if (!contains(id)) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
@@ -50,15 +48,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getAll() {
-        String sql = "SELECT films.*, ratings.* " +
-                "FROM films " +
-                "JOIN ratings on ratings.id = films.rating_id";
-        return jdbcTemplate.query(sql, filmRowMapper);
-    }
-
-    @Override
-    public Film get(int id) {
+    public Film getFilm(int id) {
         String sql = "SELECT films.*, ratings.* " +
                 "FROM films " +
                 "JOIN ratings ON ratings.id = films.rating_id " +
@@ -71,7 +61,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film add(Film film) {
+    public Collection<Film> getAllFilms() {
+        String sql = "SELECT films.*, ratings.* " +
+                "FROM films " +
+                "JOIN ratings on ratings.id = films.rating_id";
+        return jdbcTemplate.query(sql, filmRowMapper);
+    }
+
+    @Override
+    public Film createFilm(Film film) {
         String sql = "INSERT INTO FILMS (name, description, release_date, duration, rating_id) " +
                 "VALUES (?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -92,7 +90,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         String sql = "UPDATE films " +
                 "SET name = ?,description = ?,release_date = ?,duration = ?,rating_id = ? " +
                 "WHERE id = ?";
@@ -105,7 +103,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void deleteFilm(int id) {
         String sql = "DELETE FROM films " +
                 "WHERE id = ?";
         jdbcTemplate.update(sql, id);

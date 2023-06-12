@@ -55,9 +55,9 @@ public class LikeStorageTest {
     @Test
     void addLikeTest() {
         User user = createUser1();
-        user = userDbStorage.add(user);
+        user = userDbStorage.addUser(user);
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         likeStorage.addLike(film.getId(), user.getId());
         List<Integer> usersIDs = getLikedUsers(film.getId());
         assertEquals(usersIDs.size(), 1);
@@ -67,9 +67,9 @@ public class LikeStorageTest {
     @Test
     void deleteLikeTest() {
         User user = createUser1();
-        user = userDbStorage.add(user);
+        user = userDbStorage.addUser(user);
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         likeStorage.addLike(film.getId(), user.getId());
         likeStorage.deleteLike(film.getId(), user.getId());
         List<Integer> usersIDs = getLikedUsers(film.getId());
@@ -87,17 +87,17 @@ public class LikeStorageTest {
     @Test
     void getMostLikedFilms() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         User user3 = createUser3();
-        user3 = userDbStorage.add(user3);
+        user3 = userDbStorage.addUser(user3);
         Film film1 = createFilm1();
-        film1 = filmDbStorage.add(film1);
+        film1 = filmDbStorage.createFilm(film1);
         Film film2 = createFilm2();
-        filmDbStorage.add(film2);
+        filmDbStorage.createFilm(film2);
         Film film3 = createFilm3();
-        film3 = filmDbStorage.add(film3);
+        film3 = filmDbStorage.createFilm(film3);
 
         likeStorage.addLike(film3.getId(), user1.getId());
         likeStorage.addLike(film3.getId(), user2.getId());

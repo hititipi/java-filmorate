@@ -13,11 +13,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
+
     private final LikeStorage likeStorage;
     private final FeedDbStorage feedDbStorage;
     private final FilmDbStorage filmDbStorage;
     private final DirectorStorage directorStorage;
-    private final UserDbStorage userDbStorage;
 
     public void addLike(Integer filmID, Integer userID) {
         likeStorage.addLike(filmID, userID);

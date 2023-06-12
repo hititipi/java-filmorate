@@ -20,13 +20,7 @@ public class MpaStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaRowMapper mpaRowMapper = new MpaRowMapper();
 
-    public List<Mpa> getAll() {
-        String sql = "SELECT * " +
-                "FROM ratings";
-        return jdbcTemplate.query(sql, mpaRowMapper);
-    }
-
-    public Mpa get(Integer id) {
+    public Mpa findById(Integer id) {
         String sql = "SELECT * " +
                 "FROM ratings " +
                 "WHERE id = ?";
@@ -36,4 +30,11 @@ public class MpaStorage {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
     }
+
+    public List<Mpa> findAll() {
+        String sql = "SELECT * " +
+                "FROM ratings";
+        return jdbcTemplate.query(sql, mpaRowMapper);
+    }
+
 }

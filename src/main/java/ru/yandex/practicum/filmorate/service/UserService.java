@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Event;
@@ -18,34 +18,39 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class UserDbService extends ResourceService<User, UserDbStorage> {
+@RequiredArgsConstructor
+public class UserService {
 
+    private final UserDbStorage userDbStorage;
     private final LikeStorage likeStorage;
     private final FriendStorage friendStorage;
     private final FilmDbStorage filmDbStorage;
     private final FeedDbStorage feedDbStorage;
 
-    @Autowired
-    public UserDbService(UserDbStorage storage, LikeStorage likeStorage, FriendStorage friendStorage, FilmDbStorage filmDbStorage, FeedDbStorage feedDbStorage) {
-        this.likeStorage = likeStorage;
-        this.filmDbStorage = filmDbStorage;
-        this.storage = storage;
-        this.friendStorage = friendStorage;
-        this.feedDbStorage = feedDbStorage;
+    public User getUser(int id) {
+        return userDbStorage.getUser(id);
+    }
+
+    public Collection<User> getAllUsers() {
+        return userDbStorage.getAllUsers();
+    }
+
+    public User createUser(User user) {
+        userDbStorage.addUser(user);
+        return user;
+    }
+
+    public User updateUser(User user) {
+        return userDbStorage.updateUser(user);
     }
 
     public void deleteUser(int id) {
-        storage.delete(id);
-    }
-
-
-    @Override
-    public void validateResource(User resource) {
+        userDbStorage.deleteUser(id);
     }
 
     public void addFriend(int id, int friendId) {
-        storage.checkContains(id);
-        storage.checkContains(friendId);
+        userDbStorage.checkContains(id);
+        userDbStorage.checkContains(friendId);
         friendStorage.addFriend(id, friendId);
         feedDbStorage.addEvent(new Event(id, EventType.FRIEND, Operation.ADD, friendId));
     }
@@ -56,7 +61,7 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
     }
 
     public Collection<User> getUserFriends(int id) {
-        storage.checkContains(id);
+        userDbStorage.checkContains(id);
         return friendStorage.getFriends(id);
     }
 
@@ -65,12 +70,12 @@ public class UserDbService extends ResourceService<User, UserDbStorage> {
     }
 
     public Collection<Event> getFeed(int id) {
-        storage.checkContains(id);
+        userDbStorage.checkContains(id);
         return feedDbStorage.findUserFeed(id);
     }
 
     public List<Film> getRecommendations(int userId) {
-        storage.checkContains(userId);
+        userDbStorage.checkContains(userId);
         log.info("Recommendations Films от User с id = " + userId);
         Map<Integer, List<Integer>> likes = likeStorage.getSameLikesByUser(userId);
         List<Integer> userFilms = likes.remove(userId);

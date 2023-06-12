@@ -20,8 +20,8 @@ public class FeedDbStorage {
     public void addEvent(Event event) {
         int eventTypeId = eventTypeStorage.findTypeId(event.getEventType());
         int operationId = operationStorage.findOperationId(event.getOperation());
-        String sql = "insert into events (timestamp, user_id, event_type_id, operation_id, entity_id) " +
-                "values (?, ?, ?, ?, ?)";
+        String sql = "INSERT into events (timestamp, user_id, event_type_id, operation_id, entity_id) " +
+                "VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(
                 sql,
                 event.getTimestamp(),
@@ -33,7 +33,9 @@ public class FeedDbStorage {
     }
 
     public List<Event> findUserFeed(int userId) {
-        String sql = "select * from events where user_id = ?";
+        String sql = "SELECT * " +
+                "FROM events " +
+                "WHERE user_id = ?";
         return jdbcTemplate.query(sql, eventRowMapper, userId);
     }
 }

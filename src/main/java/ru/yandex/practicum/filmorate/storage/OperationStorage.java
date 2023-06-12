@@ -17,7 +17,7 @@ public class OperationStorage {
 
     public Operation findOperationById(int id) {
         String operation = jdbcTemplate.queryForObject(
-                "select name from operations where id = ?",
+                "SELECT name FROM operations WHERE id = ?",
                 (rs, rowNum) -> rs.getString("name"),
                 id
         );
@@ -29,7 +29,7 @@ public class OperationStorage {
 
     public int findOperationId(Operation operation) {
         Integer id = jdbcTemplate.queryForObject(
-                "select id from operations where name = ?",
+                "SELECT id FROM operations WHERE name = ?",
                 (rs, rowNum) -> rs.getInt("id"),
                 operation.name()
         );

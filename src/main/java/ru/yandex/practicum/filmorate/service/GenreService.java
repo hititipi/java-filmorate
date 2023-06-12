@@ -13,11 +13,13 @@ public class GenreService {
 
     private final GenreStorage genreStorage;
 
-    public List<Genre> getAll() {
-        return genreStorage.getAll();
+    public Genre getGenre(int id) {
+        return genreStorage.findById(id);
     }
 
-    public Genre getGenreById(int id) {
-        return genreStorage.get(id);
+    public List<Genre> getAllGenres() {
+        return genreStorage.findAll();
     }
+
+
 }

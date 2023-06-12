@@ -26,7 +26,7 @@ public class MpaStorageTest {
 
     @Test
     void getAllTest() {
-        List<Mpa> allGenres = mpaStorage.getAll();
+        List<Mpa> allGenres = mpaStorage.findAll();
         assertEquals(allGenres.size(), 5);
         for (Mpa mpa : ratings) {
             assertTrue(allGenres.contains(mpa));
@@ -35,13 +35,13 @@ public class MpaStorageTest {
 
     @Test
     void getMpa() {
-        Mpa mpa = mpaStorage.get(1);
+        Mpa mpa = mpaStorage.findById(1);
         assertEquals(mpa, ratings[0]);
     }
 
     @Test
     void getMpaByInvalidId() {
-        ValidationException exception = assertThrows(ValidationException.class, () -> mpaStorage.get(-1));
+        ValidationException exception = assertThrows(ValidationException.class, () -> mpaStorage.findById(-1));
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
     }
