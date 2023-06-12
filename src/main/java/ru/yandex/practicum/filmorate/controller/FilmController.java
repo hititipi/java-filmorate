@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.service.FilmDbService;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.utils.Messages;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,40 +13,42 @@ import javax.validation.constraints.Positive;
 import java.util.*;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/films")
-public class FilmController extends AbstractController<Film, FilmDbService> {
+public class FilmController {
 
+    private final FilmService filmService;
     private final LikeService likeService;
 
-    @Autowired
-    public FilmController(FilmDbService service, LikeService likeService) {
-        this.service = service;
-        this.likeService = likeService;
+    @GetMapping("{id}")
+    public Film getFilm(@PathVariable int id) {
+        log.info(Messages.getFilm(id));
+        return filmService.getFilm(id);
     }
 
     @GetMapping
-    public Collection<Film> getAll() {
+    public Collection<Film> getAllFilms() {
         log.info(Messages.getAllFilms());
-        return super.getAll();
-    }
-
-    @GetMapping("{id}")
-    public Film get(@PathVariable int id) {
-        log.info(Messages.getFilm(id));
-        return super.get(id);
+        return filmService.getAllFilms();
     }
 
     @PostMapping
-    public Film createResource(@Valid @RequestBody Film film) {
-        log.info(Messages.tryAddResource(film));
-        return super.createResource(film);
+    public Film createFilm(@Valid @RequestBody Film film) {
+        log.info(Messages.addFilm());
+        return filmService.createFilm(film);
     }
 
     @PutMapping
-    public Film updateResource(@Valid @RequestBody Film film) {
-        log.info(Messages.tryUpdateResource(film));
-        return super.updateResource(film);
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        log.info(Messages.updateFilm(film.getId()));
+        return filmService.updateFilm(film);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteFilm(@PathVariable int id) {
+        log.info(Messages.deleteFilm(id));
+        filmService.deleteFilm(id);
     }
 
     @PutMapping("{filmId}/like/{userId}")
@@ -69,22 +71,24 @@ public class FilmController extends AbstractController<Film, FilmDbService> {
         return likeService.getMostLikedFilms(count, genreId, year);
     }
 
-    @GetMapping("search")
-    public List<Film> getFilmsBySearch(@RequestParam(required = false) String query,
-                                       @RequestParam(required = false) String by) {
-        log.info(Messages.getFilmBySubstring());
-        return (query == null && by == null) ? likeService.getAllFilmsSortedByRating() : service.searchFilms(query, by);
-    }
-
     @GetMapping("/director/{directorId}")
     public Collection<Film> getSortedFilms(
             @PathVariable("directorId") Integer directorId, @RequestParam String sortBy) {
         log.info(Messages.getSortedFilms(sortBy));
-        return service.getDirectorFilmsWithSort(directorId, sortBy);
+        return filmService.getDirectorFilmsWithSort(directorId, sortBy);
     }
 
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
-        return service.getCommonFilms(userId, friendId);
+        log.info(Messages.getCommonsFilms(userId, friendId));
+        return filmService.getCommonFilms(userId, friendId);
     }
+
+    @GetMapping("search")
+    public List<Film> getFilmsBySearch(@RequestParam(required = false) String query,
+                                       @RequestParam(required = false) String by) {
+        log.info(Messages.getFilmBySubstring());
+        return (query == null && by == null) ? likeService.getAllFilmsSortedByRating() : filmService.searchFilms(query, by);
+    }
+
 }

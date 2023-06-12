@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
-import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.*;
 import ru.yandex.practicum.filmorate.utils.EventType;
 import ru.yandex.practicum.filmorate.utils.Operation;
 
@@ -16,6 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
+
     private final LikeStorage likeStorage;
     private final FeedDbStorage feedDbStorage;
     private final FilmDbStorage filmDbStorage;

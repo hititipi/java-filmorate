@@ -14,35 +14,37 @@ import java.util.Collection;
 @AllArgsConstructor
 @RequestMapping("/directors")
 public class DirectorController {
+
     private final DirectorService directorService;
 
     @GetMapping("{id}")
-    public Director get(@PathVariable int id) {
+    public Director getDirector(@PathVariable int id) {
         log.info(Messages.getDirector(id));
-        return directorService.getDirectorById(id);
+        return directorService.getDirector(id);
     }
 
     @GetMapping
-    public Collection<Director> getAll() {
+    public Collection<Director> getAllDirectors() {
         log.info(Messages.getAllDirectors());
-        return directorService.getAll();
+        return directorService.getAllDirectors();
     }
 
     @PostMapping
-    public Director createResource(@RequestBody Director director) {
-        log.info(Messages.tryAddResource(director));
-        return directorService.createResource(director);
+    public Director createDirector(@RequestBody Director director) {
+        log.info(Messages.addDirector());
+        return directorService.createDirector(director);
     }
 
     @PutMapping
-    public Director updateResource(@RequestBody Director director) {
-        log.info(Messages.tryUpdateResource(director));
+    public Director updateDirector(@RequestBody Director director) {
+        log.info(Messages.updateDirector(director.getId()));
         directorService.update(director);
         return director;
     }
 
     @DeleteMapping("{id}")
-    public void deleteResource(@PathVariable int id) {
-        directorService.delete(id);
+    public void deleteDirector(@PathVariable int id) {
+        log.info(Messages.deleteDirector(id));
+        directorService.deleteDirector(id);
     }
 }

@@ -20,14 +20,7 @@ public class GenreStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreRowMapper genreRowMapper = new GenreRowMapper();
 
-    public List<Genre> getAll() {
-        String sql = "SELECT * " +
-                "FROM genres " +
-                "ORDER BY id;";
-        return jdbcTemplate.query(sql, genreRowMapper);
-    }
-
-    public Genre get(Integer id) {
+    public Genre findById(Integer id) {
         String sql = "SELECT * " +
                 "FROM genres " +
                 "WHERE id=?";
@@ -37,4 +30,12 @@ public class GenreStorage {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
     }
+
+    public List<Genre> findAll() {
+        String sql = "SELECT * " +
+                "FROM genres " +
+                "ORDER BY id;";
+        return jdbcTemplate.query(sql, genreRowMapper);
+    }
+
 }

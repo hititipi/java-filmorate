@@ -17,61 +17,61 @@ import java.util.List;
 @RequestMapping("/reviews")
 public class ReviewController {
 
-    private final ReviewService service;
+    private final ReviewService reviewService;
 
     @GetMapping("{id}")
-    public Review get(@PathVariable int id) {
+    public Review getReview(@PathVariable int id) {
         log.info(Messages.getReview(id));
-        return service.get(id);
+        return reviewService.getReview(id);
     }
 
     @GetMapping()
-    public List<Review> getAll(@RequestParam(required = false, defaultValue = "0") int filmId,
-                               @RequestParam(required = false, defaultValue = "10") @Positive int count) {
+    public List<Review> getAllReviews(@RequestParam(required = false, defaultValue = "0") int filmId,
+                                      @RequestParam(required = false, defaultValue = "10") @Positive int count) {
         log.info(Messages.getAllReviews());
-        return service.getPopularReviewsByFilmId(filmId, count);
+        return reviewService.getPopularReviewsByFilmId(filmId, count);
     }
 
     @PostMapping
-    public Review createResource(@Valid @RequestBody Review review) {
+    public Review createReview(@Valid @RequestBody Review review) {
         log.info(Messages.createReview());
-        return service.createResource(review);
+        return reviewService.createReview(review);
     }
 
     @PutMapping
-    public Review updateResource(@Valid @RequestBody Review review) {
+    public Review updateReview(@Valid @RequestBody Review review) {
         log.info(Messages.updateReview(review.getReviewId()));
-        return service.updateResource(review);
+        return reviewService.updateReview(review);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable int id) {
+    public void deleteReview(@PathVariable int id) {
         log.info(Messages.deleteReview(id));
-        service.deleteResource(id);
+        reviewService.deleteReview(id);
     }
 
     @PutMapping("/{reviewId}/like/{userId}")
     public void addLike(@PathVariable int reviewId, @PathVariable int userId) {
         log.info(Messages.addReviewLike(reviewId, userId));
-        service.addLike(reviewId, userId);
+        reviewService.addLike(reviewId, userId);
     }
 
     @PutMapping("/{reviewId}/dislike/{userId}")
     public void addDislike(@PathVariable int reviewId, @PathVariable int userId) {
         log.info(Messages.addReviewDislike(reviewId, userId));
-        service.addDislike(reviewId, userId);
+        reviewService.addDislike(reviewId, userId);
     }
 
     @DeleteMapping("/{reviewId}/like/{userId}")
     public void removeLike(@PathVariable int reviewId, @PathVariable int userId) {
         log.info(Messages.removeReviewLike(reviewId, userId));
-        service.removeLikeOrDislike(reviewId, userId);
+        reviewService.removeLikeOrDislike(reviewId, userId);
     }
 
     @DeleteMapping("/{reviewId}/dislike/{userId}")
     public void removeDislike(@PathVariable int reviewId, @PathVariable int userId) {
         log.info(Messages.removeReviewDislike(reviewId, userId));
-        service.removeLikeOrDislike(reviewId, userId);
+        reviewService.removeLikeOrDislike(reviewId, userId);
     }
 
 }

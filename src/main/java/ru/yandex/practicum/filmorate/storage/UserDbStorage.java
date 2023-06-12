@@ -23,7 +23,6 @@ public class UserDbStorage implements UserStorage {
     private final UserRowMapper userRowMapper = new UserRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public boolean contains(int id) {
         String sql = "SELECT count(*) " +
                 "FROM users " +
@@ -32,7 +31,6 @@ public class UserDbStorage implements UserStorage {
         return result != null && result == 1;
     }
 
-    @Override
     public void checkContains(int id) {
         if (!contains(id)) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
@@ -40,14 +38,14 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> getAll() {
+    public Collection<User> getAllUsers() {
         String query = "SELECT * " +
                 "FROM users;";
         return jdbcTemplate.query(query, userRowMapper);
     }
 
     @Override
-    public User get(int id) {
+    public User getUser(int id) {
         String sql = "SELECT * " +
                 "FROM users " +
                 "WHERE id = ?";
@@ -59,7 +57,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User add(User user) {
+    public User addUser(User user) {
         String sql = "INSERT INTO users(login,name, email, birthday) " +
                 "VALUES(?,?,?,?)";
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -78,7 +76,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         String sql = "UPDATE users " +
                 "SET (login,name, email, birthday) = (?,?,?,?) " +
                 "WHERE id=?";
@@ -91,7 +89,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void deleteUser(int id) {
         String sql = "DELETE FROM users " +
                 "WHERE id = ?";
         jdbcTemplate.update(sql, id);

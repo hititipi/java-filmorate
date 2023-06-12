@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -20,16 +19,11 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
+public class FilmService {
 
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final FilmDbStorage filmStorage;
     private final DirectorStorage directorStorage;
-
-    @Autowired
-    public FilmDbService(FilmDbStorage storage, DirectorStorage directorStorage) {
-        this.directorStorage = directorStorage;
-        this.storage = storage;
-    }
 
     private void validateReleaseDate(LocalDate releaseDate) {
         if (releaseDate != null && MIN_RELEASE_DATE.isAfter(releaseDate)) {
@@ -38,55 +32,51 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
         }
     }
 
-    @Override
-    public void validateResource(Film film) {
+    public void validateFilm(Film film) {
         validateReleaseDate(film.getReleaseDate());
     }
 
-    @Override
-    public Film get(int id) {
-        Film film = super.get(id);
-        film = storage.loadFilmGenre(film);
+    public Film getFilm(int id) {
+        Film film = filmStorage.getFilm(id);
+        film = filmStorage.loadFilmGenre(film);
         film = directorStorage.loadFilmDirectors(film);
         return film;
     }
 
-    @Override
-    public Collection<Film> getAll() {
-        Collection<Film> films = super.getAll();
+    public Collection<Film> getAllFilms() {
+        Collection<Film> films = filmStorage.getAllFilms();
         List<Film> filmLIst = new ArrayList<>(films);
-        filmLIst = storage.loadFilmGenres(filmLIst);
+        filmLIst = filmStorage.loadFilmGenres(filmLIst);
         filmLIst = directorStorage.loadFilmDirectors(filmLIst);
         return filmLIst;
     }
 
-    @Override
-    public Film createResource(Film film) {
-        film = super.createResource(film);
-        storage.setFilmGenre(film);
+    public Film createFilm(Film film) {
+        validateFilm(film);
+        film = filmStorage.createFilm(film);
+        filmStorage.setFilmGenre(film);
         directorStorage.setFilmDirectors(film);
         return film;
     }
 
-    @Override
-    public Film updateResource(Film resource) {
-        Film film = super.updateResource(resource);
-        storage.updateFilmGenre(film);
-        directorStorage.updateFilmDirectors(film);
-        return film;
+    public Film updateFilm(Film film) {
+        validateFilm(film);
+        Film updateFilm = filmStorage.updateFilm(film);
+        filmStorage.updateFilmGenre(updateFilm);
+        directorStorage.updateFilmDirectors(updateFilm);
+        return updateFilm;
     }
 
-    @Override
-    public void deleteResource(int id) {
-        super.deleteResource(id);
-        storage.deleteFilmGenre(id);
+    public void deleteFilm(int id) {
+        filmStorage.deleteFilm(id);
+        filmStorage.deleteFilmGenre(id);
         directorStorage.deleteFilmDirectors(id);
     }
 
     public List<Film> getDirectorFilmsWithSort(int directorId, String sortBy) {
         if (directorStorage.findById(directorId) != null) {
-            List<Film> films = storage.findDirectorFilmsWithSort(directorId, sortBy);
-            films = storage.loadFilmGenres(films);
+            List<Film> films = filmStorage.findDirectorFilmsWithSort(directorId, sortBy);
+            films = filmStorage.loadFilmGenres(films);
             films = directorStorage.loadFilmDirectors(films);
             return films;
         } else throw new ValidationException(HttpStatus.BAD_REQUEST, RESOURCE_NOT_FOUND);
@@ -96,16 +86,16 @@ public class FilmDbService extends ResourceService<Film, FilmDbStorage> {
         List<Film> films = new ArrayList<>();
 
         if (by.split(",").length == 2) {
-            films.addAll(storage.searchFilmByTitleAndDirector(query));
+            films.addAll(filmStorage.searchFilmByTitleAndDirector(query));
         } else if (by.equals("title")) {
-            films.addAll(storage.searchFilmByTitle(query));
+            films.addAll(filmStorage.searchFilmByTitle(query));
         } else if (by.equals("director")) {
-            films.addAll(storage.searchFilmByDirector(query));
+            films.addAll(filmStorage.searchFilmByDirector(query));
         }
         return films;
     }
 
     public List<Film> getCommonFilms(int userId, int friendId) {
-        return storage.getCommonFilms(userId, friendId);
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }

@@ -26,7 +26,7 @@ public class GenreStorageTest {
 
     @Test
     void getAllTest() {
-        List<Genre> allGenres = genreStorage.getAll();
+        List<Genre> allGenres = genreStorage.findAll();
         assertEquals(allGenres.size(), 6);
         for (Genre genre : genres) {
             assertTrue(allGenres.contains(genre));
@@ -35,13 +35,13 @@ public class GenreStorageTest {
 
     @Test
     void getGenre() {
-        Genre genre = genreStorage.get(1);
+        Genre genre = genreStorage.findById(1);
         assertEquals(genre, genres[0]);
     }
 
     @Test
     void getGenreByInvalidId() {
-        ValidationException exception = assertThrows(ValidationException.class, () -> genreStorage.get(-1));
+        ValidationException exception = assertThrows(ValidationException.class, () -> genreStorage.findById(-1));
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
     }

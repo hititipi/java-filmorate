@@ -41,9 +41,9 @@ public class FriendStorageTest {
     @Test
     void addFriend() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         friendStorage.addFriend(user1.getId(), user2.getId());
         Collection<User> friends = friendStorage.getFriends(user1.getId());
         assertEquals(friends.size(), 1);
@@ -53,9 +53,9 @@ public class FriendStorageTest {
     @Test
     void deleteFriend() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         friendStorage.addFriend(user1.getId(), user2.getId());
         friendStorage.deleteFriend(user1.getId(), user2.getId());
         Collection<User> friends = friendStorage.getFriends(user1.getId());
@@ -73,11 +73,11 @@ public class FriendStorageTest {
     @Test
     void getFriend() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         User user3 = createUser3();
-        user3 = userDbStorage.add(user3);
+        user3 = userDbStorage.addUser(user3);
         friendStorage.addFriend(user1.getId(), user2.getId());
         friendStorage.addFriend(user1.getId(), user3.getId());
         Collection<User> friends = friendStorage.getFriends(user1.getId());
@@ -89,11 +89,11 @@ public class FriendStorageTest {
     @Test
     void getCommonFriends() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         User user3 = createUser3();
-        user3 = userDbStorage.add(user3);
+        user3 = userDbStorage.addUser(user3);
         friendStorage.addFriend(user1.getId(), user3.getId());
         friendStorage.addFriend(user2.getId(), user3.getId());
         Collection<User> friends = friendStorage.getCommonFriends(user1.getId(), user2.getId());

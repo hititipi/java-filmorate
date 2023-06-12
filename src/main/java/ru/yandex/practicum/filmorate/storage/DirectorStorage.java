@@ -29,13 +29,6 @@ public class DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
     private final DirectorRowMapper directorRowMapper = new DirectorRowMapper();
 
-    public List<Director> findAll() {
-        String sql = "SELECT * " +
-                "FROM directors " +
-                "ORDER BY id";
-        return jdbcTemplate.query(sql, directorRowMapper);
-    }
-
     public Director findById(int id) {
         String sql = "SELECT * " +
                 "FROM directors " +
@@ -45,6 +38,13 @@ public class DirectorStorage {
         } catch (EmptyResultDataAccessException e) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
+    }
+
+    public List<Director> findAll() {
+        String sql = "SELECT * " +
+                "FROM directors " +
+                "ORDER BY id";
+        return jdbcTemplate.query(sql, directorRowMapper);
     }
 
     public Director add(Director director) {

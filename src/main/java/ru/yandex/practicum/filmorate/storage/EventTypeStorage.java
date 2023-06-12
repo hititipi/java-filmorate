@@ -17,7 +17,7 @@ public class EventTypeStorage {
 
     public EventType findTypeById(int id) {
         String type = jdbcTemplate.queryForObject(
-                "select name from event_types where id = ?",
+                "SELECT name FROM event_types WHERE id = ?",
                 (rs, rowNum) -> rs.getString("name"),
                 id
         );
@@ -29,7 +29,7 @@ public class EventTypeStorage {
 
     public int findTypeId(EventType type) {
         Integer id = jdbcTemplate.queryForObject(
-                "select id from event_types where name = ?",
+                "SELECT id FROM event_types WHERE name = ?",
                 (rs, rowNum) -> rs.getInt("id"),
                 type.name()
         );
