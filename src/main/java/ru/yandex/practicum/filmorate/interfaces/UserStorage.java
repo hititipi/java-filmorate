@@ -6,10 +6,6 @@ import java.util.Collection;
 
 public interface UserStorage {
 
-    // boolean contains(int id);
-
-    // void checkContains(int id);
-
     Collection<User> getAllUsers();
 
     User getUser(int id);
