@@ -13,13 +13,21 @@ import java.util.List;
 public class FeedDbStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final EventTypeStorage eventTypeStorage;
-    private final OperationStorage operationStorage;
-    private final EventRowMapper eventRowMapper;
+    private final EventRowMapper eventRowMapper = new EventRowMapper();
+    private static final String SQL_GET_EVENT_TYPE_ID = "SELECT id FROM event_types WHERE name = ?";
+    private static final String SQL_GET_OPERATION_ID = "SELECT id FROM operations WHERE name = ?";
 
     public void addEvent(Event event) {
-        int eventTypeId = eventTypeStorage.findTypeId(event.getEventType());
-        int operationId = operationStorage.findOperationId(event.getOperation());
+        Integer eventTypeId = jdbcTemplate.queryForObject(
+                SQL_GET_EVENT_TYPE_ID,
+                (rs, rowNum) -> rs.getInt("id"),
+                event.getEventType().name()
+        );
+        Integer operationId = jdbcTemplate.queryForObject(
+                SQL_GET_OPERATION_ID,
+                (rs, rowNum) -> rs.getInt("id"),
+                event.getOperation().name()
+        );
         String sql = "INSERT into events (timestamp, user_id, event_type_id, operation_id, entity_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(
@@ -33,8 +41,10 @@ public class FeedDbStorage {
     }
 
     public List<Event> findUserFeed(int userId) {
-        String sql = "SELECT * " +
+        String sql = "SELECT events.*, event_types.name, operations.name " +
                 "FROM events " +
+                "JOIN event_types ON event_types.id=events.event_type_id " +
+                "JOIN operations ON operations.id=events.operation_id " +
                 "WHERE user_id = ?";
         return jdbcTemplate.query(sql, eventRowMapper, userId);
     }
