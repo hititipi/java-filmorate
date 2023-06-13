@@ -76,46 +76,22 @@ public class UserService {
 
     public List<Film> getRecommendations(int userId) {
         userStorage.checkContains(userId);
-        log.info("Recommendations Films от User с id = " + userId);
         Map<Integer, List<Integer>> likes = likeStorage.getSameLikesByUser(userId);
-        List<Integer> userFilms = likes.remove(userId);
-        if (userFilms == null || likes.isEmpty()) return Collections.emptyList();
-        Map<Integer, List<Integer>> intersects = new TreeMap<>(Comparator.reverseOrder());
-        for (Map.Entry<Integer, List<Integer>> entry : likes.entrySet()) {
-            int intersectsCount = countingIntersects(userFilms, entry.getValue());
-            intersects.putIfAbsent(intersectsCount, new ArrayList<>());
-            intersects.get(intersectsCount).add(entry.getKey());
-        }
-        List<Integer> similarUserFilms = new ArrayList<>();
-        for (Map.Entry<Integer, List<Integer>> entry : intersects.entrySet()) {
-            for (Integer currentUserId : entry.getValue()) {
-                List<Integer> currentUserFilms = likes.get(currentUserId);
-                if (entry.getKey() < currentUserFilms.size()) {
-                    similarUserFilms = currentUserFilms;
-                    break;
-                }
-            }
-            if (!similarUserFilms.isEmpty()) {
-                break;
-            }
-        }
-        List<Integer> difference = findDifference(userFilms, similarUserFilms);
-        return filmDbStorage.getByListId(difference);
+        List<Integer> recommendations = computeRecommendations(likes.remove(userId), likes.values());
+        return recommendations == null ? Collections.emptyList() : filmDbStorage.getByListId(recommendations);
     }
 
-    private int countingIntersects(List<Integer> userFilm, List<Integer> anotherFilms) {
-        int count = 0;
-        for (Integer filmId : userFilm) {
-            if (anotherFilms.contains(filmId)) count++;
+    private List<Integer> computeRecommendations(List<Integer> userFilms, Collection<List<Integer>> otherUserFilms) {
+        int maxSameLikes = - 1;
+        List<Integer> recommendations = null;
+        for (List<Integer> films : otherUserFilms) {
+            int size = films.size();
+            films.removeAll(userFilms);
+            if (size - films.size() > maxSameLikes && !films.isEmpty()) {
+                maxSameLikes = size - films.size();
+                recommendations = films;
+            }
         }
-        return count;
-    }
-
-    private List<Integer> findDifference(List<Integer> userFilms, List<Integer> anotherFilms) {
-        List<Integer> diff = new ArrayList<>();
-        for (Integer filmId : anotherFilms) {
-            if (!userFilms.contains(filmId)) diff.add(filmId);
-        }
-        return diff;
+        return recommendations;
     }
 }

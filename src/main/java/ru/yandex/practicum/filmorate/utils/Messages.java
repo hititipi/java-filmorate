@@ -169,5 +169,8 @@ public class Messages {
         return String.format("Некорректная дата релиза: %s", date);
     }
 
+    public static String getRecommendation(int userId) {
+        return String.format("Рекомендации Films для User с id = " + userId);
+    }
 }
 
