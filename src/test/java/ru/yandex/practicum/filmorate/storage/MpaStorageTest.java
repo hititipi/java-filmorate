@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.impl.MpaStorageImpl;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import static ru.yandex.practicum.filmorate.TestUtils.ratings;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MpaStorageTest {
 
-    private final MpaStorage mpaStorage;
+    private final MpaStorageImpl mpaStorage;
 
     @Test
     void getAllTest() {

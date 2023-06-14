@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.impl.FilmStorageImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static ru.yandex.practicum.filmorate.TestUtils.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class FilmStorageTest {
 
-    private final FilmDbStorage filmDbStorage;
+    private final FilmStorageImpl filmDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @BeforeEach

@@ -1,22 +1,24 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.mapper.EventRowMapper;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FeedDbStorage {
+public class FeedStorageImpl implements FeedStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final EventRowMapper eventRowMapper = new EventRowMapper();
     private static final String SQL_GET_EVENT_TYPE_ID = "SELECT id FROM event_types WHERE name = ?";
     private static final String SQL_GET_OPERATION_ID = "SELECT id FROM operations WHERE name = ?";
 
+    @Override
     public void addEvent(Event event) {
         Integer eventTypeId = jdbcTemplate.queryForObject(
                 SQL_GET_EVENT_TYPE_ID,
@@ -40,6 +42,7 @@ public class FeedDbStorage {
         );
     }
 
+    @Override
     public List<Event> findUserFeed(int userId) {
         String sql = "SELECT events.*, event_types.name, operations.name " +
                 "FROM events " +

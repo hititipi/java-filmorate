@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.impl.GenreStorageImpl;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import static ru.yandex.practicum.filmorate.TestUtils.genres;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GenreStorageTest {
 
-    private final GenreStorage genreStorage;
+    private final GenreStorageImpl genreStorage;
 
     @Test
     void getAllTest() {

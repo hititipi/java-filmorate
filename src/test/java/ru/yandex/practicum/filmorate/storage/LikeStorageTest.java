@@ -17,6 +17,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.impl.FilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.impl.LikeStorageImpl;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorageImpl;
 
 import java.util.List;
 
@@ -26,9 +29,9 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LikeStorageTest {
 
-    private final LikeStorage likeStorage;
-    private final UserDbStorage userDbStorage;
-    private final FilmDbStorage filmDbStorage;
+    private final LikeStorageImpl likeStorage;
+    private final UserDbStorageImpl userDbStorage;
+    private final FilmStorageImpl filmDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @BeforeEach

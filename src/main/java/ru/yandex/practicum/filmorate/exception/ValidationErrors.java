@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.exception;
 public class ValidationErrors {
 
     public static final String RESOURCE_NOT_FOUND = "Ресурс не найден";
+    public static final String ERROR_SEARCH_QUERY = "Неправильный запрос на поиск";
 
     // user errors
     public static final String EMAIL_NULL = "Email не может быть null";
