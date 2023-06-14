@@ -31,14 +31,14 @@ public class LikeService {
 
     public List<Film> getMostLikedFilms(Integer count, int genreId, int year) {
         List<Film> films;
-        if (genreId != 0) {
-            films = year == 0 ?
-                    likeStorage.getPopularByGenre(count, genreId) :
-                    likeStorage.getPopularByGenreAndYear(count, genreId, year);
+        if (genreId != 0 && year != 0) {
+            films = likeStorage.getPopularByGenreAndYear(count, genreId, year);
+        } else if (genreId != 0) {
+            films = likeStorage.getPopularByGenre(count, genreId);
+        } else if (year != 0) {
+            films = likeStorage.getPopularByYear(count, year);
         } else {
-            films = year == 0 ?
-                    likeStorage.getMostLikedFilms(count) :
-                    likeStorage.getPopularByYear(count, year);
+            films = likeStorage.getMostLikedFilms(count);
         }
         return directorStorage.loadFilmDirectors(filmDbStorage.loadFilmGenres(films));
     }
