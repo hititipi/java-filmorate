@@ -98,12 +98,10 @@ public class LikeStorage {
     }
 
     public Map<Integer, List<Integer>> getSameLikesByUser(int userId) {
-        String sqlQuery = "SELECT * FROM likes " +
-                "WHERE user_id IN " +
-                "(SELECT DISTINCT user_id FROM likes " +
-                "WHERE film_id IN " +
-                "(SELECT film_id FROM likes " +
-                "WHERE user_id = ?))";
+        String sqlQuery = "SELECT DISTINCT * FROM likes AS l1 " +
+                "LEFT JOIN likes AS l2 ON l1.user_id = l2.user_id " +
+                "JOIN likes AS l3 ON l2.film_id = l3.film_id " +
+                "WHERE l3.user_id = ?";
         Map<Integer, List<Integer>> likes = new HashMap<>();
         jdbcTemplate.query(sqlQuery, rs -> {
             int id = rs.getInt("user_id");
