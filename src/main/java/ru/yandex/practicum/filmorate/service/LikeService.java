@@ -1,26 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class LikeService {
-    private final LikeStorage likeStorage;
+public interface LikeService {
+    void addLike(int filmId, int userId);
 
-    public void addLike(Integer filmID, Integer userID) {
-        likeStorage.addLike(filmID, userID);
-    }
+    void deleteLike(int filmId, int userId);
 
-    public void deleteLike(Integer filmID, Integer userID) {
-        likeStorage.deleteLike(filmID, userID);
-    }
+    List<Film> getMostLikedFilms(int count, int genreId, int year);
 
-    public List<Film> getMostLikedFilms(Integer count) {
-        return likeStorage.getMostLikedFilms(count);
-    }
+    List<Film> getAllFilmsSortedByRating();
 }

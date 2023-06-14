@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -9,14 +9,17 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.utils.SortBy;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,11 +30,12 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 
 @Component
 @RequiredArgsConstructor
-public class FilmDbStorage implements FilmStorage {
+public class FilmStorageImpl implements FilmStorage {
 
     private final FilmRowMapper filmRowMapper = new FilmRowMapper();
     private final GenreMapper genreMapper = new GenreMapper();
     private final JdbcTemplate jdbcTemplate;
+    private final DirectorStorage directorStorage;
 
     @Override
     public boolean contains(int id) {
@@ -40,7 +44,6 @@ public class FilmDbStorage implements FilmStorage {
         return result != null && result == 1;
     }
 
-    @Override
     public void checkContains(int id) {
         if (!contains(id)) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
@@ -48,15 +51,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getAll() {
-        String sql = "SELECT films.*, ratings.* " +
-                "FROM films " +
-                "JOIN ratings on ratings.id = films.rating_id;";
-        return jdbcTemplate.query(sql, filmRowMapper);
-    }
-
-    @Override
-    public Film get(int id) {
+    public Film getFilm(int id) {
         String sql = "SELECT films.*, ratings.* " +
                 "FROM films " +
                 "JOIN ratings ON ratings.id = films.rating_id " +
@@ -69,7 +64,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film add(Film film) {
+    public Collection<Film> getAllFilms() {
+        String sql = "SELECT films.*, ratings.* " +
+                "FROM films " +
+                "JOIN ratings on ratings.id = films.rating_id";
+        return jdbcTemplate.query(sql, filmRowMapper);
+    }
+
+    @Override
+    public Film createFilm(Film film) {
         String sql = "INSERT INTO FILMS (name, description, release_date, duration, rating_id) " +
                 "VALUES (?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -90,7 +93,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         String sql = "UPDATE films " +
                 "SET name = ?,description = ?,release_date = ?,duration = ?,rating_id = ? " +
                 "WHERE id = ?";
@@ -103,23 +106,26 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void deleteFilm(int id) {
         String sql = "DELETE FROM films " +
                 "WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
+    @Override
     public void deleteFilmGenre(int id) {
         String sql = "DELETE FROM film_genres " +
                 "WHERE film_id = ?";
         jdbcTemplate.update(sql, id);
     }
 
+    @Override
     public void updateFilmGenre(Film film) {
         deleteFilmGenre(film.getId());
         setFilmGenre(film);
     }
 
+    @Override
     public void setFilmGenre(Film film) {
         if (film.getGenres() == null || film.getGenres().isEmpty()) {
             return;
@@ -142,6 +148,7 @@ public class FilmDbStorage implements FilmStorage {
                 });
     }
 
+    @Override
     public Film loadFilmGenre(Film film) {
         String sql = "SELECT genre_id, genres.* " +
                 "FROM film_genres " +
@@ -152,6 +159,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    @Override
     public List<Film> loadFilmGenres(List<Film> films) {
         if (films.isEmpty()) {
             return Collections.emptyList();
@@ -179,4 +187,91 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    @Override
+    public List<Film> searchFilmByTitle(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*, ratings.* FROM films join ratings on films.rating_id = ratings.id  WHERE LCASE(films.name) LIKE ? ";
+        return jdbcTemplate.query(sqlQuery, filmRowMapper, query);
+    }
+
+    @Override
+    public List<Film> searchFilmByTitleAndDirector(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*, ratings.* " +
+                "FROM films  " +
+                "LEFT JOIN ratings ON films.rating_id = ratings.id  " +
+                "LEFT JOIN film_directors  ON films.id = film_directors.film_id " +
+                "LEFT JOIN directors ON film_directors.director_id = directors.id " +
+                "WHERE LCASE(films.name) LIKE ? OR LCASE(directors.name) LIKE ? " +
+                "ORDER BY films.id DESC";
+
+        return directorStorage.loadFilmDirectors(loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper, query, query)));
+    }
+
+    @Override
+    public List<Film> searchFilmByDirector(String query) {
+        query = "%" + query.toLowerCase() + "%";
+        String sqlQuery = "SELECT films.*,ratings.* FROM films join ratings on films.rating_id = ratings.id  " +
+                "JOIN film_directors ON films.id = film_directors.film_id " +
+                "JOIN directors  on film_directors.director_id = directors.id  WHERE LCASE(directors.name) LIKE ? ";
+        return directorStorage.loadFilmDirectors(loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper, query)));
+
+    }
+
+    @Override
+    public List<Film> findDirectorFilmsWithSort(int directorId, SortBy sortBy) {
+        String sql;
+        switch (sortBy) {
+            case YEAR:
+                sql = "SELECT f.*, r.* " +
+                        "FROM film_directors fd " +
+                        "JOIN films f ON f.id = fd.film_id " +
+                        "JOIN ratings r ON f.rating_id = r.id " +
+                        "WHERE director_id = ? " +
+                        "ORDER BY year(f.release_date)";
+                break;
+            case LIKES:
+                sql = "SELECT f.*, r.*," +
+                        "FROM film_directors fd " +
+                        "JOIN films f ON f.id = fd.film_id " +
+                        "JOIN ratings r ON f.rating_id = r.id " +
+                        "LEFT JOIN likes l ON f.id = l.film_id " +
+                        "WHERE director_id = ? " +
+                        "GROUP BY f.id " +
+                        "ORDER BY COUNT(l.user_id)";
+                break;
+            default:
+                throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
+        }
+
+        return jdbcTemplate.query(
+                sql,
+                new FilmRowMapper(),
+                directorId
+        );
+    }
+
+    @Override
+    public List<Film> getByListId(List<Integer> filmIds) {
+        String idsStr = filmIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        String sqlQuery = "SELECT f.*, r.*" +
+                "FROM films AS f " +
+                "JOIN ratings AS r on r.id = f.rating_id " +
+                "WHERE f.id IN  (" + idsStr + ");";
+        return loadFilmGenres(jdbcTemplate.query(sqlQuery, filmRowMapper));
+    }
+
+    @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sqlQuery = "SELECT f.*, r.* " +
+                "FROM films f " +
+                "JOIN ratings r ON  f.rating_id  = r.id " +
+                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "WHERE l.user_id IN (?, ?) " +
+                "GROUP BY f.id " +
+                "HAVING COUNT(l.user_id) > 1";
+        return jdbcTemplate.query(sqlQuery, filmRowMapper, userId, friendId);
+    }
 }
