@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.utils.SortBy;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -208,27 +209,29 @@ public class FilmDbStorage implements FilmStorage {
 
     }
 
-    public List<Film> findDirectorFilmsWithSort(int directorId, String sortBy) {
+    public List<Film> findDirectorFilmsWithSort(int directorId, SortBy sortBy) {
         String sql;
-        if (sortBy.equals("year")) {
-            sql = "SELECT f.*, r.* " +
-                    "FROM film_directors fd " +
-                    "JOIN films f ON f.id = fd.film_id " +
-                    "JOIN ratings r ON f.rating_id = r.id " +
-                    "WHERE director_id = ? " +
-                    "ORDER BY year(f.release_date)";
-
-        } else if (sortBy.equals("likes")) {
-            sql = "SELECT f.*, r.*," +
-                    "(SELECT count(*) FROM likes WHERE fd.film_id = likes.film_id) AS likes " +
-                    "FROM film_directors fd " +
-                    "JOIN films f ON f.id = fd.film_id " +
-                    "JOIN ratings r ON f.rating_id = r.id " +
-                    "WHERE director_id = ? " +
-                    "ORDER BY likes DESC";
-
-        } else {
-            throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
+        switch (sortBy) {
+            case YEAR:
+                sql = "SELECT f.*, r.* " +
+                        "FROM film_directors fd " +
+                        "JOIN films f ON f.id = fd.film_id " +
+                        "JOIN ratings r ON f.rating_id = r.id " +
+                        "WHERE director_id = ? " +
+                        "ORDER BY year(f.release_date)";
+                break;
+            case LIKES:
+                sql = "SELECT f.*, r.*," +
+                        "FROM film_directors fd " +
+                        "JOIN films f ON f.id = fd.film_id " +
+                        "JOIN ratings r ON f.rating_id = r.id " +
+                        "LEFT JOIN likes l ON f.id = l.film_id " +
+                        "WHERE director_id = ? " +
+                        "GROUP BY f.id " +
+                        "ORDER BY COUNT(l.user_id)";
+                break;
+            default:
+                throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);
         }
 
         return jdbcTemplate.query(

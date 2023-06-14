@@ -9,9 +9,12 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.utils.Messages;
+import ru.yandex.practicum.filmorate.utils.SortBy;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.FILM_RELEASE_INVALID;
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_NOT_FOUND;
@@ -73,7 +76,7 @@ public class FilmService {
         directorStorage.deleteFilmDirectors(id);
     }
 
-    public List<Film> getDirectorFilmsWithSort(int directorId, String sortBy) {
+    public List<Film> getDirectorFilmsWithSort(int directorId, SortBy sortBy) {
         if (directorStorage.findById(directorId) != null) {
             List<Film> films = filmStorage.findDirectorFilmsWithSort(directorId, sortBy);
             films = filmStorage.loadFilmGenres(films);
