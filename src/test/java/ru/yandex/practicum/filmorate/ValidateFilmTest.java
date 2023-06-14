@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.impl.FilmServiceImpl;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -23,11 +23,11 @@ public class ValidateFilmTest {
 
     private static Validator validator;
 
-    private static FilmService filmService;
+    private static FilmServiceImpl filmService;
 
     @BeforeAll
     public static void setUp() {
-        filmService = new FilmService(null, null);
+        filmService = new FilmServiceImpl(null, null);
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             validator = factory.getValidator();
         }

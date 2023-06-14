@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.interfaces.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.mapper.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,11 +18,12 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 
 @Component
 @RequiredArgsConstructor
-public class UserDbStorage implements UserStorage {
+public class UserDbStorageImpl implements UserStorage {
 
     private final UserRowMapper userRowMapper = new UserRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
+    @Override
     public boolean contains(int id) {
         String sql = "SELECT count(*) " +
                 "FROM users " +
@@ -31,6 +32,7 @@ public class UserDbStorage implements UserStorage {
         return result != null && result == 1;
     }
 
+    @Override
     public void checkContains(int id) {
         if (!contains(id)) {
             throw new ValidationException(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND);

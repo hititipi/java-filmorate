@@ -20,6 +20,6 @@ public class Review {
     private Integer userId;
     @NotNull
     private Integer filmId;
-    private int useful = 0;
+    private int useful;
 
 }

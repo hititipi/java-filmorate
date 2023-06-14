@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.impl.FriendStorageImpl;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorageImpl;
 
 import java.util.Collection;
 
@@ -25,8 +27,8 @@ import static ru.yandex.practicum.filmorate.TestUtils.*;
 public class FriendStorageTest {
 
     private final JdbcTemplate jdbcTemplate;
-    private final FriendStorage friendStorage;
-    private final UserDbStorage userDbStorage;
+    private final FriendStorageImpl friendStorage;
+    private final UserDbStorageImpl userDbStorage;
 
     @BeforeEach
     void clearDb() {
