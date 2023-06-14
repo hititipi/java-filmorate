@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.utils.SortBy;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.*;
 
 @Slf4j
@@ -68,8 +68,8 @@ public class FilmController {
 
     @GetMapping("popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count,
-                                      @RequestParam(defaultValue = "0") @Positive int genreId,
-                                      @RequestParam(defaultValue = "0") @Positive int year) {
+                                      @RequestParam(defaultValue = "0") @PositiveOrZero int genreId,
+                                      @RequestParam(defaultValue = "0") @PositiveOrZero int year) {
         log.info(Messages.getPopularFilms(count, genreId, year));
         return likeService.getMostLikedFilms(count, genreId, year);
     }
