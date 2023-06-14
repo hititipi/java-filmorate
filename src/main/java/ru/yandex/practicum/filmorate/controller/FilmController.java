@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.utils.Messages;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.utils.SortBy;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -75,7 +76,7 @@ public class FilmController {
     public Collection<Film> getSortedFilms(
             @PathVariable("directorId") Integer directorId, @RequestParam String sortBy) {
         log.info(Messages.getSortedFilms(sortBy));
-        return filmService.getDirectorFilmsWithSort(directorId, sortBy);
+        return filmService.getDirectorFilmsWithSort(directorId, SortBy.getSortBy(sortBy));
     }
 
     @GetMapping("/common")

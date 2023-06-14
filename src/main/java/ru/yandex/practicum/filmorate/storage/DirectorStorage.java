@@ -136,7 +136,8 @@ public class DirectorStorage {
         List<Map<String, Object>> mapList = jdbcTemplate.queryForList(sql);
         Map<Integer, Set<Director>> directorsByFilmId = mapList.stream()
                 .collect(Collectors.groupingBy(k -> (Integer) k.get("film_id"),
-                        mapping(k -> new Director((Integer) k.get("id"), (String) k.get("name")), toSet())));
+                        mapping(this::makeDirector, toSet())));
+        ;
 
         for (Film film : films) {
             Set<Director> filmDirectors = directorsByFilmId.get(film.getId());
@@ -145,5 +146,11 @@ public class DirectorStorage {
             }
         }
         return films;
+    }
+
+    public Director makeDirector(Map<String, Object> k) {
+        int id = (int) k.get("id");
+        String name = (String) k.get("name");
+        return new Director(id, name);
     }
 }
