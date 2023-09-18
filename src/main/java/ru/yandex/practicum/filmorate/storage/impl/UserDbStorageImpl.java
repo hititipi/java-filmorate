@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.interfaces.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.mapper.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.exception.ValidationErrors.RESOURCE_
 
 @Component
 @RequiredArgsConstructor
-public class UserDbStorage implements UserStorage {
+public class UserDbStorageImpl implements UserStorage {
 
     private final UserRowMapper userRowMapper = new UserRowMapper();
     private final JdbcTemplate jdbcTemplate;
@@ -40,14 +40,14 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> getAll() {
+    public Collection<User> getAllUsers() {
         String query = "SELECT * " +
                 "FROM users;";
         return jdbcTemplate.query(query, userRowMapper);
     }
 
     @Override
-    public User get(int id) {
+    public User getUser(int id) {
         String sql = "SELECT * " +
                 "FROM users " +
                 "WHERE id = ?";
@@ -59,7 +59,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User add(User user) {
+    public User addUser(User user) {
         String sql = "INSERT INTO users(login,name, email, birthday) " +
                 "VALUES(?,?,?,?)";
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -78,7 +78,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         String sql = "UPDATE users " +
                 "SET (login,name, email, birthday) = (?,?,?,?) " +
                 "WHERE id=?";
@@ -91,10 +91,9 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void deleteUser(int id) {
         String sql = "DELETE FROM users " +
                 "WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
-
 }

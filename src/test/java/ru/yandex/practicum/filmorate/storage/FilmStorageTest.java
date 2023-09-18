@@ -9,9 +9,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.impl.FilmStorageImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,9 +27,10 @@ import static ru.yandex.practicum.filmorate.TestUtils.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class FilmStorageTest {
 
-    private final FilmDbStorage filmDbStorage;
+    private final FilmStorageImpl filmDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @BeforeEach
@@ -42,9 +45,9 @@ public class FilmStorageTest {
     void getAllFilms() {
         Film film1 = createFilm1();
         Film film2 = createFilm2();
-        filmDbStorage.add(film1);
-        filmDbStorage.add(film2);
-        Collection<Film> films = filmDbStorage.getAll();
+        filmDbStorage.createFilm(film1);
+        filmDbStorage.createFilm(film2);
+        Collection<Film> films = filmDbStorage.getAllFilms();
         Assertions.assertEquals(films.size(), 2);
         Assertions.assertTrue(films.contains(film1));
         Assertions.assertTrue(films.contains(film1));
@@ -53,15 +56,15 @@ public class FilmStorageTest {
     @Test
     void getFilm() {
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
-        Film gottenFilm = filmDbStorage.get(film.getId());
+        film = filmDbStorage.createFilm(film);
+        Film gottenFilm = filmDbStorage.getFilm(film.getId());
         assertEquals(film, gottenFilm);
     }
 
     @Test
     void getFilmWithInvalidId() {
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> filmDbStorage.get(-1));
+                () -> filmDbStorage.getFilm(-1));
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
     }
@@ -69,8 +72,8 @@ public class FilmStorageTest {
     @Test
     void addFilm() {
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
-        Collection<Film> films = filmDbStorage.getAll();
+        film = filmDbStorage.createFilm(film);
+        Collection<Film> films = filmDbStorage.getAllFilms();
         assertEquals(films.size(), 1);
         assertTrue(films.contains(film));
     }
@@ -78,11 +81,11 @@ public class FilmStorageTest {
     @Test
     void updateFilm() {
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         Film updateFilm = createFilm2();
         updateFilm.setId(film.getId());
-        updateFilm = filmDbStorage.update(updateFilm);
-        Film gottenFilm = filmDbStorage.get(film.getId());
+        updateFilm = filmDbStorage.updateFilm(updateFilm);
+        Film gottenFilm = filmDbStorage.getFilm(film.getId());
         assertEquals(updateFilm, gottenFilm);
     }
 
@@ -90,7 +93,7 @@ public class FilmStorageTest {
     void updateNotExistingFilm() {
         Film film = createFilm1();
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> filmDbStorage.update(film));
+                () -> filmDbStorage.updateFilm(film));
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
     }
@@ -98,16 +101,16 @@ public class FilmStorageTest {
     @Test
     void deleteFilm() {
         Film film1 = createFilm1();
-        film1 = filmDbStorage.add(film1);
-        filmDbStorage.delete(film1.getId());
-        Collection<Film> films = filmDbStorage.getAll();
+        film1 = filmDbStorage.createFilm(film1);
+        filmDbStorage.deleteFilm(film1.getId());
+        Collection<Film> films = filmDbStorage.getAllFilms();
         Assertions.assertTrue(films.isEmpty());
     }
 
     @Test
     void checkContains() {
         Film film1 = createFilm1();
-        film1 = filmDbStorage.add(film1);
+        film1 = filmDbStorage.createFilm(film1);
         int id = film1.getId();
         assertDoesNotThrow(() -> filmDbStorage.checkContains(id));
     }
@@ -125,7 +128,7 @@ public class FilmStorageTest {
         Set<Genre> filmGenres = Set.of(genres[0], genres[1]);
         Film film = createFilm1();
         film.setGenres(filmGenres);
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         filmDbStorage.setFilmGenre(film);
         Film gettingFilm = filmDbStorage.loadFilmGenre(film);
         Set<Genre> gettingGenres = gettingFilm.getGenres();
@@ -139,12 +142,12 @@ public class FilmStorageTest {
         Set<Genre> filmGenres1 = Set.of(genres[0], genres[1]);
         Film film1 = createFilm1();
         film1.setGenres(filmGenres1);
-        film1 = filmDbStorage.add(film1);
+        film1 = filmDbStorage.createFilm(film1);
         filmDbStorage.setFilmGenre(film1);
         Set<Genre> filmGenres2 = Set.of(genres[3], genres[4]);
         Film film2 = createFilm2();
         film2.setGenres(filmGenres2);
-        film2 = filmDbStorage.add(film2);
+        film2 = filmDbStorage.createFilm(film2);
         filmDbStorage.setFilmGenre(film2);
 
         List<Film> films = List.of(film1, film2);
@@ -173,7 +176,7 @@ public class FilmStorageTest {
         Set<Genre> filmGenres = Set.of(genres[0], genres[1]);
         Film film = createFilm1();
         film.setGenres(filmGenres);
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         filmDbStorage.setFilmGenre(film);
         filmDbStorage.deleteFilmGenre(film.getId());
 
@@ -188,7 +191,7 @@ public class FilmStorageTest {
         Set<Genre> filmGenres = Set.of(genres[0], genres[1]);
         Film film = createFilm1();
         film.setGenres(filmGenres);
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         filmDbStorage.setFilmGenre(film);
         Set<Genre> filmGenres2 = Set.of(genres[3], genres[4]);
         film.setGenres(filmGenres2);

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import ru.yandex.practicum.filmorate.interfaces.Resource;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -11,7 +10,7 @@ import java.util.Set;
 import static ru.yandex.practicum.filmorate.exception.ValidationErrors.*;
 
 @Data
-public class Film implements Resource {
+public class Film {
 
     private int id;
     @NotNull(message = FILM_NAME_NULL)
@@ -25,10 +24,6 @@ public class Film implements Resource {
     @NotNull
     private Mpa mpa;
     private Set<Genre> genres = new HashSet<>();
-
-    @Override
-    public String getResourceName() {
-        return "фильм";
-    }
+    private Set<Director> directors = new HashSet<>();
 
 }

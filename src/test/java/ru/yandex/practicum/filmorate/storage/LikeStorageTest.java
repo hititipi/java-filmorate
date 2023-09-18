@@ -13,20 +13,25 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.impl.FilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.impl.LikeStorageImpl;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorageImpl;
 
 import java.util.List;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LikeStorageTest {
 
-    private final LikeStorage likeStorage;
-    private final UserDbStorage userDbStorage;
-    private final FilmDbStorage filmDbStorage;
+    private final LikeStorageImpl likeStorage;
+    private final UserDbStorageImpl userDbStorage;
+    private final FilmStorageImpl filmDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @BeforeEach
@@ -53,9 +58,9 @@ public class LikeStorageTest {
     @Test
     void addLikeTest() {
         User user = createUser1();
-        user = userDbStorage.add(user);
+        user = userDbStorage.addUser(user);
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         likeStorage.addLike(film.getId(), user.getId());
         List<Integer> usersIDs = getLikedUsers(film.getId());
         assertEquals(usersIDs.size(), 1);
@@ -65,9 +70,9 @@ public class LikeStorageTest {
     @Test
     void deleteLikeTest() {
         User user = createUser1();
-        user = userDbStorage.add(user);
+        user = userDbStorage.addUser(user);
         Film film = createFilm1();
-        film = filmDbStorage.add(film);
+        film = filmDbStorage.createFilm(film);
         likeStorage.addLike(film.getId(), user.getId());
         likeStorage.deleteLike(film.getId(), user.getId());
         List<Integer> usersIDs = getLikedUsers(film.getId());
@@ -85,17 +90,17 @@ public class LikeStorageTest {
     @Test
     void getMostLikedFilms() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
+        user2 = userDbStorage.addUser(user2);
         User user3 = createUser3();
-        user3 = userDbStorage.add(user3);
+        user3 = userDbStorage.addUser(user3);
         Film film1 = createFilm1();
-        film1 = filmDbStorage.add(film1);
+        film1 = filmDbStorage.createFilm(film1);
         Film film2 = createFilm2();
-        filmDbStorage.add(film2);
+        filmDbStorage.createFilm(film2);
         Film film3 = createFilm3();
-        film3 = filmDbStorage.add(film3);
+        film3 = filmDbStorage.createFilm(film3);
 
         likeStorage.addLike(film3.getId(), user1.getId());
         likeStorage.addLike(film3.getId(), user2.getId());

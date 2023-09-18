@@ -9,8 +9,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorageImpl;
 
 import java.util.Collection;
 
@@ -21,9 +23,10 @@ import static ru.yandex.practicum.filmorate.TestUtils.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserStorageTest {
 
-    private final UserDbStorage userDbStorage;
+    private final UserDbStorageImpl userDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @BeforeEach
@@ -39,10 +42,10 @@ public class UserStorageTest {
     @Test
     void getAll() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         User user2 = createUser2();
-        user2 = userDbStorage.add(user2);
-        Collection<User> users = userDbStorage.getAll();
+        user2 = userDbStorage.addUser(user2);
+        Collection<User> users = userDbStorage.getAllUsers();
         assertEquals(users.size(), 2);
         assertTrue(users.contains(user1));
         assertTrue(users.contains(user2));
@@ -51,15 +54,15 @@ public class UserStorageTest {
     @Test
     void getUser() {
         User user = createUser1();
-        user = userDbStorage.add(user);
-        User gottenUser = userDbStorage.get(user.getId());
+        user = userDbStorage.addUser(user);
+        User gottenUser = userDbStorage.getUser(user.getId());
         assertEquals(user, gottenUser);
     }
 
     @Test
     void getFilmWithInvalidId() {
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> userDbStorage.get(-1));
+                () -> userDbStorage.getUser(-1));
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
     }
@@ -67,8 +70,8 @@ public class UserStorageTest {
     @Test
     void addUser() {
         User user = createUser1();
-        user = userDbStorage.add(user);
-        Collection<User> users = userDbStorage.getAll();
+        user = userDbStorage.addUser(user);
+        Collection<User> users = userDbStorage.getAllUsers();
         assertEquals(users.size(), 1);
         assertTrue(users.contains(user));
     }
@@ -76,11 +79,11 @@ public class UserStorageTest {
     @Test
     void updateUser() {
         User user = createUser1();
-        user = userDbStorage.add(user);
+        user = userDbStorage.addUser(user);
         User updatedUser = createUser2();
         updatedUser.setId(user.getId());
-        updatedUser = userDbStorage.update(updatedUser);
-        User gottenUser = userDbStorage.get(user.getId());
+        updatedUser = userDbStorage.updateUser(user);
+        User gottenUser = userDbStorage.getUser(user.getId());
         assertEquals(updatedUser, gottenUser);
     }
 
@@ -88,7 +91,7 @@ public class UserStorageTest {
     void updateNotExistingFilm() {
         User user = createUser1();
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> userDbStorage.update(user));
+                () -> userDbStorage.updateUser(user));
         assertEquals(exception.getStatus(), HttpStatus.NOT_FOUND);
         assertEquals(exception.getMessage(), RESOURCE_NOT_FOUND);
     }
@@ -96,16 +99,16 @@ public class UserStorageTest {
     @Test
     void deleteUser() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
-        userDbStorage.delete(user1.getId());
-        Collection<User> users = userDbStorage.getAll();
+        user1 = userDbStorage.addUser(user1);
+        userDbStorage.deleteUser(user1.getId());
+        Collection<User> users = userDbStorage.getAllUsers();
         Assertions.assertTrue(users.isEmpty());
     }
 
     @Test
     void checkContains() {
         User user1 = createUser1();
-        user1 = userDbStorage.add(user1);
+        user1 = userDbStorage.addUser(user1);
         int id = user1.getId();
         assertDoesNotThrow(() -> userDbStorage.checkContains(id));
     }

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import ru.yandex.practicum.filmorate.interfaces.Resource;
 
 @Getter
 @Setter
@@ -9,13 +8,9 @@ import ru.yandex.practicum.filmorate.interfaces.Resource;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Mpa implements Resource {
+public class Mpa {
 
     private int id;
     private String name;
 
-    @Override
-    public String getResourceName() {
-        return "Рейтинг";
-    }
 }
